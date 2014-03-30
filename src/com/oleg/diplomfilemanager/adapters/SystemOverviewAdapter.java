@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class SystemOverviewAdapter extends BaseAdapter {
@@ -24,6 +25,13 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		this.fileInfoItems = fileInfoItems;
 		lInflater = (LayoutInflater) context
 				.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+	}
+
+	static class ViewHolder {
+		public ImageView ivIco;
+		public TextView tvDirName;
+		public TextView tvLastEdit;
+		public TextView tvFileSize;
 	}
 
 	@Override
@@ -43,18 +51,24 @@ public class SystemOverviewAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-
+		ViewHolder viewHolder;
 		View view = convertView;
 		if (convertView == null) {
 			view = lInflater.inflate(R.layout.system_overview_item, parent,
 					false);
+			viewHolder = new ViewHolder();
+			viewHolder.tvDirName = (TextView) view.findViewById(R.id.tvDirName);
+			viewHolder.tvLastEdit = (TextView) view
+					.findViewById(R.id.tvLastEdit);
+			viewHolder.tvFileSize = (TextView) view
+					.findViewById(R.id.tvFileSize);
+			view.setTag(viewHolder);
+		} else {
+			viewHolder = (ViewHolder) view.getTag();
 		}
-		TextView tvDirName = (TextView) view.findViewById(R.id.tvDirName);
-		TextView tvLastEdit = (TextView) view.findViewById(R.id.tvLastEdit);
-		TextView tvFileSize = (TextView) view.findViewById(R.id.tvFileSize);
-		tvDirName.setText(fileInfoItems.get(position).getFullPath());
-		tvLastEdit.setText(fileInfoItems.get(position).getLastModified());
-		tvFileSize.setText(fileInfoItems.get(position).getContentLength()
+		viewHolder.tvDirName.setText(fileInfoItems.get(position).getFullPath());
+		viewHolder.tvLastEdit.setText(fileInfoItems.get(position).getLastModified());
+		viewHolder.tvFileSize.setText(fileInfoItems.get(position).getContentLength()
 				+ fileInfoItems.get(position).getFilePermissions());
 
 		return view;

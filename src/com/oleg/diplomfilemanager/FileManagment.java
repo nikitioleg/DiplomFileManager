@@ -5,6 +5,7 @@ import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
@@ -15,6 +16,8 @@ public class FileManagment {
 	private final int KB = 1024;
 	private final int MB = KB * KB;
 	private final int GB = MB * KB;
+	private final String ROOT = Environment.getExternalStorageDirectory()
+			.getPath();
 
 	private Context context;
 	private FileInfoItem.Builder builder;
@@ -73,6 +76,11 @@ public class FileManagment {
 		File[] temp = file.listFiles();
 		ArrayList<FileInfoItem> filesInfoList = new ArrayList<FileInfoItem>();
 		builder = new FileInfoItem.Builder();
+		if (!currentFile.equals(ROOT)){
+			builder.setFullPath(new File(currentFile).getParent());
+			builder.setDisplayName(" ... ");
+			filesInfoList.add(builder.build());
+		}
 		for (int i = 0; i < temp.length; i++) {
 			builder.setFullPath(temp[i].getAbsolutePath());
 			builder.setDisplayName(temp[i].getName());
