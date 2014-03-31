@@ -20,22 +20,28 @@ public class SystemOverview extends ListFragment {
 			.getPath();
 	private String currentDir = ROOT;
 
-	FileManagment fileManagment = new FileManagment(getActivity());
+	FileManagment fileManagment = new FileManagment(this);
 	ArrayList<FileInfoItem> fileInfoItems;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		updateList(ROOT);
+		getActivity().setTitle(getCurrentDir());
 	}
 
 	public void back() {
 		if (fileInfoItems.get(0).getFullPath()
 				.equals(new File(currentDir).getParent())) {
 			updateList(fileInfoItems.get(0).getFullPath());
-			setCurrenDir(currentDir, true);
+			setCurrentDir(currentDir, true);
+			getActivity().setTitle(getCurrentDir());
 		} else
 			return;
+	}
+
+	public String getCurrentDir() {
+		return currentDir;
 	}
 
 	@Override
@@ -43,11 +49,15 @@ public class SystemOverview extends ListFragment {
 		// Toast.makeText(getActivity(), "" + position,
 		// Toast.LENGTH_SHORT).show();
 		super.onListItemClick(l, v, position, id);
-		updateList(setCurrenDir(fileInfoItems.get(position).getFullPath(),
-				false));
+		if (fileInfoItems.get(position).isCollection()) {
+			updateList(setCurrentDir(fileInfoItems.get(position).getFullPath(),
+					false));
+			getActivity().setTitle(getCurrentDir());
+		} else
+			fileManagment.openFile(fileInfoItems.get(position));
 	}
 
-	private String setCurrenDir(String string, boolean getParent) {
+	private String setCurrentDir(String string, boolean getParent) {
 		if (getParent) {
 			return currentDir = new File(string).getParent();
 		}

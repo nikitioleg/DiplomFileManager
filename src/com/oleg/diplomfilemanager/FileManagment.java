@@ -6,9 +6,13 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 public class FileManagment {
 
@@ -19,16 +23,24 @@ public class FileManagment {
 	private final String ROOT = Environment.getExternalStorageDirectory()
 			.getPath();
 
-	private Context context;
+	private SystemOverview sOverview;
 	private FileInfoItem.Builder builder;
 
-	public FileManagment(Context context) {
-		this.context = context;
+	public FileManagment(SystemOverview systemOverview) {
+		sOverview = systemOverview;
 	}
 
 	public String getMIME(File file) {
-		FileNameMap fileNameMap = URLConnection.getFileNameMap();
-		return fileNameMap.getContentTypeFor(file.getAbsolutePath());
+		// FileNameMap fileNameMap = URLConnection.getFileNameMap();
+		// return fileNameMap.getContentTypeFor(file.getAbsolutePath());
+
+		String type = null;
+		String extension = MimeTypeMap.getFileExtensionFromUrl(getURL(file));
+		if (extension != null) {
+			MimeTypeMap mime = MimeTypeMap.getSingleton();
+			type = mime.getMimeTypeFromExtension(extension);
+		}
+		return type;
 	}
 
 	public String getLastModif(File file) {
@@ -76,7 +88,7 @@ public class FileManagment {
 		File[] temp = file.listFiles();
 		ArrayList<FileInfoItem> filesInfoList = new ArrayList<FileInfoItem>();
 		builder = new FileInfoItem.Builder();
-		if (!currentFile.equals(ROOT)){
+		if (!currentFile.equals(ROOT)) {
 			builder.setFullPath(new File(currentFile).getParent());
 			builder.setDisplayName(" ... ");
 			filesInfoList.add(builder.build());
@@ -100,6 +112,23 @@ public class FileManagment {
 
 	private String getURL(File file) {
 		return file.toURI().toString();
+	}
+
+	public boolean openFile(FileInfoItem fileInfoItem) {
+		Intent open = new Intent();
+		open.setAction(android.content.Intent.ACTION_VIEW);
+		try {
+			open.setDataAndType(
+					Uri.fromFile(new File(fileInfoItem.getPublicUrl())),
+					fileInfoItem.getContentType());
+			Log.d(LOG_TAG, "Open try " + fileInfoItem.getContentType());
+			open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			sOverview.startActivity(open);
+			return true;
+		} catch (ActivityNotFoundException e) {
+			Log.d(LOG_TAG, "Open " + fileInfoItem.getContentType());
+			return false;
+		}
 	}
 
 }
