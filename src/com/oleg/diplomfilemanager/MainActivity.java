@@ -1,23 +1,49 @@
 package com.oleg.diplomfilemanager;
 
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
+
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity {
 
-	SystemOverview systemOverview = new SystemOverview();
+	private final String ROOT = Environment.getExternalStorageDirectory()
+			.getPath();
+
+	SystemOverviewFragment systemOverview;
+	private SlidingMenu slidingMenu;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		systemOverview = new SystemOverviewFragment();
 		if (savedInstanceState == null) {
+			Bundle bundle = new Bundle();
+			bundle.putString("displayed_directory",ROOT);
+			systemOverview.setArguments(bundle);
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, systemOverview).commit();
 		}
+		createSlidingmenu();
+	}
+
+	private void createSlidingmenu() {
+		slidingMenu = new SlidingMenu(this);
+		slidingMenu.setMode(SlidingMenu.LEFT);
+		slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		slidingMenu.setShadowWidthRes(R.dimen.slidingmenu_shadow_width);
+		slidingMenu.setShadowDrawable(R.drawable.slidingmenu_shadow);
+		slidingMenu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+		slidingMenu.setFadeDegree(0.35f);
+		slidingMenu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		slidingMenu.setMenu(new SlidingMenuLayout(this));
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	@Override

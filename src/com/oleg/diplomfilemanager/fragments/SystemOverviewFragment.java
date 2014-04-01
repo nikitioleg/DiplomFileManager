@@ -1,8 +1,10 @@
-package com.oleg.diplomfilemanager;
+package com.oleg.diplomfilemanager.fragments;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import com.oleg.diplomfilemanager.FileInfoItem;
+import com.oleg.diplomfilemanager.FileManagment;
 import com.oleg.diplomfilemanager.adapters.SystemOverviewAdapter;
 
 import android.os.Bundle;
@@ -14,10 +16,11 @@ import android.view.View.OnKeyListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class SystemOverview extends ListFragment {
+public class SystemOverviewFragment extends ListFragment {
 
 	private final String ROOT = Environment.getExternalStorageDirectory()
 			.getPath();
+	private final String DISP_DIR = "displayed_directory";
 	private String currentDir = ROOT;
 
 	FileManagment fileManagment = new FileManagment(this);
@@ -26,7 +29,7 @@ public class SystemOverview extends ListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		updateList(ROOT);
+		updateList(getArguments().getString(DISP_DIR));
 		getActivity().setTitle(getCurrentDir());
 	}
 

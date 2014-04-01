@@ -14,7 +14,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:paddingRight="10dip" />
+            android:paddingLeft="5dip"
+            android:paddingRight="5dip" />
 
         <TextView
             android:id="@+id/tvDirName"

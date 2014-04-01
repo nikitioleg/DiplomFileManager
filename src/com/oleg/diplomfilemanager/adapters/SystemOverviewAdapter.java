@@ -80,7 +80,7 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		} else {
 			viewHolder = (ViewHolder) view.getTag();
 		}
-		viewHolder.tvDirName.setText(fileInfoItems.get(position).getFullPath());
+		viewHolder.tvDirName.setText(fileInfoItems.get(position).getName());
 		viewHolder.tvLastEdit.setText(fileInfoItems.get(position)
 				.getLastModified());
 		viewHolder.tvFileSize.setText(fileInfoItems.get(position)
@@ -92,6 +92,11 @@ public class SystemOverviewAdapter extends BaseAdapter {
 
 	public static void setFileIcon(final FileInfoItem fileInfoItem,
 			ImageView imageView) {
+		
+		if (fileInfoItem.isPreviousFolder()){
+			imageView.setImageResource(R.drawable.folder_up);
+			return;
+		}
 
 		if (fileInfoItem.isCollection()) {
 			imageView.setImageResource(R.drawable.folder);

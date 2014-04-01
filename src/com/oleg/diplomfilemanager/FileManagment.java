@@ -6,6 +6,8 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
+
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +15,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
+import android.widget.Toast;
 
 public class FileManagment {
 
@@ -23,10 +26,10 @@ public class FileManagment {
 	private final String ROOT = Environment.getExternalStorageDirectory()
 			.getPath();
 
-	private SystemOverview sOverview;
+	private SystemOverviewFragment sOverview;
 	private FileInfoItem.Builder builder;
 
-	public FileManagment(SystemOverview systemOverview) {
+	public FileManagment(SystemOverviewFragment systemOverview) {
 		sOverview = systemOverview;
 	}
 
@@ -91,6 +94,8 @@ public class FileManagment {
 		if (!currentFile.equals(ROOT)) {
 			builder.setFullPath(new File(currentFile).getParent());
 			builder.setDisplayName(" ... ");
+			builder.addCollection(true);
+			builder.addPreviousFolder(true);
 			filesInfoList.add(builder.build());
 		}
 		for (int i = 0; i < temp.length; i++) {
@@ -104,6 +109,7 @@ public class FileManagment {
 			builder.addWritable(temp[i].canWrite());
 			builder.setVisible(!temp[i].isHidden());
 			builder.setPublicUrl(getURL(temp[i]));
+			builder.addPreviousFolder(false);
 			filesInfoList.add(builder.build());
 		}
 

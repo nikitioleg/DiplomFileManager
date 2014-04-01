@@ -7,7 +7,7 @@ public class FileInfoItem {
 	private FileInfoItem(String displayName, String lastModified,
 			String fullPath, String contentType, String publicUrl,
 			boolean isCollection, boolean isReadable, boolean isWritable,
-			boolean isVisible, String contentLength) {
+			boolean isVisible, String contentLength, boolean isPreviousFolder) {
 
 		this.displayName = displayName;
 		this.lastModified = lastModified;
@@ -19,18 +19,21 @@ public class FileInfoItem {
 		this.isWritable = isWritable;
 		this.isVisible = isVisible;
 		this.contentLength = contentLength;
+		this.isPreviousFolder = isPreviousFolder;
 
 	}
 
 	private String displayName, lastModified, fullPath, contentType, publicUrl,
 			contentLength;
-	private boolean isCollection, isVisible, isReadable, isWritable;
+	private boolean isCollection, isVisible, isReadable, isWritable,
+			isPreviousFolder;
 
 	public static class Builder {
 
 		private String displayName, lastModified, fullPath, contentType,
 				publicUrl, contentLength;
-		private boolean isCollection, isVisible, isReadable, isWritable;
+		private boolean isCollection, isVisible, isReadable, isWritable,
+				isPreviousFolder;
 
 		public void setFullPath(String fullPath) {
 			this.fullPath = fullPath;
@@ -75,10 +78,14 @@ public class FileInfoItem {
 			this.publicUrl = publicUrl;
 		}
 
+		public void addPreviousFolder(boolean isPreviousFolder) {
+			this.isPreviousFolder = isPreviousFolder;
+		}
+
 		public FileInfoItem build() {
 			return new FileInfoItem(displayName, lastModified, fullPath,
 					contentType, publicUrl, isCollection, isReadable,
-					isWritable, isVisible, contentLength);
+					isWritable, isVisible, contentLength, isPreviousFolder);
 		}
 
 	}
@@ -127,6 +134,10 @@ public class FileInfoItem {
 		return publicUrl;
 	}
 
+	public boolean isPreviousFolder() {
+		return isPreviousFolder;
+	}
+
 	public String getFilePermissions() {
 		String permission = " | ";
 		if (isCollection())
@@ -150,6 +161,7 @@ public class FileInfoItem {
 				+ " fullPath " + fullPath + " contentType " + contentType
 				+ " publicUrl " + publicUrl + " isCollection " + isCollection
 				+ " isReadable " + isReadable + " isWritable " + isWritable
-				+ " isVisible " + isVisible + " contentLength " + contentLength;
+				+ " isVisible " + isVisible + " contentLength " + contentLength
+				+ " isPreviousFolder " + isPreviousFolder;
 	}
 }
