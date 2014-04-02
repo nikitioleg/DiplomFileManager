@@ -2,35 +2,31 @@ package com.oleg.diplomfilemanager.fragments;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.FileManagment;
 import com.oleg.diplomfilemanager.adapters.SystemOverviewAdapter;
-
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ListFragment;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnKeyListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
-public class SystemOverviewFragment extends ListFragment {
+public class SystemOverviewFragment extends ListFragment{
 
-	private final String ROOT = Environment.getExternalStorageDirectory()
+	private final String SD_CARD = Environment.getExternalStorageDirectory()
 			.getPath();
 	private final String DISP_DIR = "displayed_directory";
-	private String currentDir = ROOT;
+	private String currentDir = SD_CARD;
 
 	FileManagment fileManagment = new FileManagment(this);
 	ArrayList<FileInfoItem> fileInfoItems;
-
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		updateList(getArguments().getString(DISP_DIR));
 		getActivity().setTitle(getCurrentDir());
+		
 	}
 
 	public void back() {
@@ -67,7 +63,8 @@ public class SystemOverviewFragment extends ListFragment {
 		return currentDir = string;
 	}
 
-	private void updateList(String path) {
+	public void updateList(String path) {
+		
 		fileInfoItems = fileManagment.getList(path);
 		SystemOverviewAdapter overviewAdapter = new SystemOverviewAdapter(
 				getActivity(), fileInfoItems);
