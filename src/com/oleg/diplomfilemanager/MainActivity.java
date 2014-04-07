@@ -4,6 +4,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
 
 import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.KeyEvent;
@@ -17,12 +18,20 @@ public class MainActivity extends ActionBarActivity {
 
 	private SystemOverviewFragment systemOverview;
 	private SlidingMenu slidingMenu;
+	private YandexDiskAuthorization yandexDiskClient;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		systemOverview = new SystemOverviewFragment();
+		yandexDiskClient = new YandexDiskAuthorization(getApplicationContext());
+		
+		Intent intent = getIntent();
+		
+		if (intent != null && intent.getData() != null) {
+            yandexDiskClient.onLogin(getIntent());
+        }
 		
 		if (savedInstanceState == null) {
 			createSlidingmenu();

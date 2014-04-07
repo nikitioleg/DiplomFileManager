@@ -1,5 +1,6 @@
 package com.oleg.diplomfilemanager.adapters;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -13,12 +14,14 @@ import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.R;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +34,7 @@ public class SystemOverviewAdapter extends BaseAdapter {
 	private LayoutInflater lInflater;
 	private static Context context;
 	private ArrayList<FileInfoItem> fileInfoItems;
+	private SharedPreferences sharedPreferences;
 
 	public SystemOverviewAdapter(Context context,
 			ArrayList<FileInfoItem> fileInfoItems) {
@@ -38,6 +42,8 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		this.fileInfoItems = fileInfoItems;
 		lInflater = (LayoutInflater) context
 				.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+
+	//	getStorage();
 	}
 
 	static class ViewHolder {
@@ -92,8 +98,8 @@ public class SystemOverviewAdapter extends BaseAdapter {
 
 	public static void setFileIcon(final FileInfoItem fileInfoItem,
 			ImageView imageView) {
-		
-		if (fileInfoItem.isPreviousFolder()){
+
+		if (fileInfoItem.isPreviousFolder()) {
 			imageView.setImageResource(R.drawable.folder_up);
 			return;
 		}
@@ -157,7 +163,7 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		}
 	}
 
-	public static Bitmap getApkIcon(String fullPath) {
+	private static Bitmap getApkIcon(String fullPath) {
 		Bitmap bmpIcon = null;
 
 		PackageInfo packageInfo = context.getPackageManager()
@@ -176,6 +182,27 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		}
 
 		return bmpIcon;
+	}
+
+	private ArrayList<String> getStorage() {
+		return null;
+		
+	}
+
+	public ArrayList<String> prepareStorage() {
+		String storage = "/storage";
+		File temp = new File(storage);
+		ArrayList<String> storages = new ArrayList<String>();
+		if (temp.exists()) {
+			String[] strings = temp.list();
+			for (int i = 0; i < strings.length; i++) {
+				storages.add(storage + "/" + strings[i]);
+			}
+			storages.add("Созд. Новое Хранилище");
+		} else {
+			storages.add(Environment.getExternalStorageDirectory().getPath());
+		}
+		return storages;
 	}
 
 }

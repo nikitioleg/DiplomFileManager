@@ -17,7 +17,7 @@ public class SlidingMenuLayout extends LinearLayout implements
 
 	private final String SD_CARD = Environment.getExternalStorageDirectory()
 			.getPath();
-	//private final String INTEGRAL_MEMORY = ctx.getFilesDir().getAbsolutePath();
+	private final String INTEGRAL_MEMORY = "/mnt/sdcard";
 
 	private ExpandableListView list;
 	private Context ctx;
@@ -59,8 +59,8 @@ public class SlidingMenuLayout extends LinearLayout implements
 			return false;
 		}
 		if (groupPosition == 0 & childPosition == 1) {
-			String string = ctx.getFilesDir().getAbsolutePath();
-			systemOverview.updateList(string);
+			//systemOverview.updateList(INTEGRAL_MEMORY);
+			new YandexDiskAuthorization(ctx).startYandexDisKAuthorization();
 			slidingMenu.toggle();
 			return false;
 		}

@@ -17,6 +17,7 @@ public class SystemOverviewFragment extends ListFragment{
 			.getPath();
 	private final String DISP_DIR = "displayed_directory";
 	private String currentDir = SD_CARD;
+	private SystemOverviewAdapter overviewAdapter;
 
 	FileManagment fileManagment = new FileManagment(this);
 	ArrayList<FileInfoItem> fileInfoItems;
@@ -66,7 +67,7 @@ public class SystemOverviewFragment extends ListFragment{
 	public void updateList(String path) {
 		
 		fileInfoItems = fileManagment.getList(path);
-		SystemOverviewAdapter overviewAdapter = new SystemOverviewAdapter(
+		overviewAdapter = new SystemOverviewAdapter(
 				getActivity(), fileInfoItems);
 		setListAdapter(overviewAdapter);
 	}
