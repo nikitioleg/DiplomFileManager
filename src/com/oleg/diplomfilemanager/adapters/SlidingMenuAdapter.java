@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.oleg.diplomfilemanager.R;
+import com.oleg.diplomfilemanager.R.id;
+import com.oleg.diplomfilemanager.R.layout;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -20,12 +22,10 @@ public class SlidingMenuAdapter extends BaseExpandableListAdapter {
 	private String[] storage = new String[] { "sdcard0", "sdcard1" };
 	private String[] lastOpen = new String[] { "Item 0", "Item 1", "Item 2",
 			"Item 3" };
-	private Context ctx;
 	private HashMap<String, ArrayList<String>> data;
 	private LayoutInflater layoutInflater;
 
 	public SlidingMenuAdapter(Context ctx) {
-		this.ctx = ctx;
 		data = prepareData();
 		layoutInflater = (LayoutInflater) ctx
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

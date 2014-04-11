@@ -7,23 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.net.rtp.RtpStream;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 public class YandexDiskAuthorization {
-
-	private static final int GET_ACCOUNT_CREDS_INTENT = 100;
-
-	public static final String CLIENT_ID = "36c90d0661b644998b7d36afcee167c5";
-	public static final String CLIENT_SECRET = "45693810a541466e9dbb559194c0eed2";
-
-	public static final String ACCOUNT_TYPE = "com.yandex";
-	public static final String AUTH_URL = "https://oauth.yandex.ru/authorize?response_type=token&client_id="
-			+ CLIENT_ID;
-	private static final String ACTION_ADD_ACCOUNT = "com.yandex.intent.ADD_ACCOUNT";
-	private static final String KEY_CLIENT_SECRET = "clientSecret";
-	public static String USERNAME = "example.username";
-	public static String TOKEN = "example.token";
 
 	private Context context;
 
@@ -31,14 +19,15 @@ public class YandexDiskAuthorization {
 		this.context = context;
 	}
 
-	public void startYandexDisKAuthorization() {
+	public boolean startYandexDiskAuthorization() {
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		String token = preferences.getString(TOKEN, null);
+		String token = preferences.getString(Constants.TOKEN, null);
 		if (token == null) {
 			getToken();
-			return;
-		}
+			return false;
+		} else
+			return true;
 	}
 
 	public void getYndexDiskFileList() {
@@ -85,33 +74,34 @@ public class YandexDiskAuthorization {
 		// }
 
 		context.startActivity(new Intent(Intent.ACTION_VIEW, Uri
-				.parse(AUTH_URL)));
+				.parse(Constants.AUTH_URL)));
 
 	}
 
 	public void onLogin(Intent intent) {
 		Uri data = intent.getData();
-		intent=null;
+		intent = null;
 		Pattern pattern = Pattern.compile("access_token=(.*?)(&|$)");
 		Matcher matcher = pattern.matcher(data.toString());
 		if (matcher.find()) {
 			final String token = matcher.group(1);
 			if (!TextUtils.isEmpty(token)) {
-			//	Log.d(TAG, "onLogin: token: " + token);
+				// Log.d(TAG, "onLogin: token: " + token);
 				saveToken(token);
 			} else {
-			//	Log.w(TAG, "onRegistrationSuccess: empty token");
+				// Log.w(TAG, "onRegistrationSuccess: empty token");
 			}
 		} else {
-		//	Log.w(TAG, "onRegistrationSuccess: token not found in return url");
+			// Log.w(TAG,
+			// "onRegistrationSuccess: token not found in return url");
 		}
 	}
 
 	private void saveToken(String token) {
 		SharedPreferences.Editor editor = PreferenceManager
 				.getDefaultSharedPreferences(context).edit();
-		editor.putString(USERNAME, "");
-		editor.putString(TOKEN, token);
+		editor.putString(Constants.USERNAME, "");
+		editor.putString(Constants.TOKEN, token);
 		editor.commit();
 	}
 }

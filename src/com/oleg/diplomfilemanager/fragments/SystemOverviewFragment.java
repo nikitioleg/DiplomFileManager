@@ -2,38 +2,44 @@ package com.oleg.diplomfilemanager.fragments;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import com.oleg.diplomfilemanager.Constants;
 import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.FileManagment;
+import com.oleg.diplomfilemanager.LoadersControl;
 import com.oleg.diplomfilemanager.adapters.SystemOverviewAdapter;
+
+import android.support.v4.app.LoaderManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
-public class SystemOverviewFragment extends ListFragment{
+public class SystemOverviewFragment extends ListFragment {
 
-	private final String SD_CARD = Environment.getExternalStorageDirectory()
-			.getPath();
-	private final String DISP_DIR = "displayed_directory";
-	private String currentDir = SD_CARD;
+	private String currentDir = Constants.SD_CARD;
 	private SystemOverviewAdapter overviewAdapter;
+	private FileManagment fileManagment;
+	ArrayList<FileInfoItem> currentDirFileInfoItems;
 
-	FileManagment fileManagment = new FileManagment(this);
-	ArrayList<FileInfoItem> fileInfoItems;
-	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		updateList(getArguments().getString(DISP_DIR));
+		fileManagment = FileManagment.getInstance();
+		setCurrentDirFileInfoItems(fileManagment.getList(getArguments()
+				.getString(Constants.DISP_DIR)));
+		updateList(getCurrentDirFileInfoItems());
 		getActivity().setTitle(getCurrentDir());
-		
 	}
 
 	public void back() {
-		if (fileInfoItems.get(0).getFullPath()
+		if (currentDirFileInfoItems.get(0).getFullPath()
 				.equals(new File(currentDir).getParent())) {
-			updateList(fileInfoItems.get(0).getFullPath());
+			setCurrentDirFileInfoItems(fileManagment
+					.getList(currentDirFileInfoItems.get(0).getFullPath()));
+			updateList(getCurrentDirFileInfoItems());
 			setCurrentDir(currentDir, true);
 			getActivity().setTitle(getCurrentDir());
 		} else
@@ -45,30 +51,75 @@ public class SystemOverviewFragment extends ListFragment{
 	}
 
 	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		// Toast.makeText(getActivity(), "" + position,
-		// Toast.LENGTH_SHORT).show();
+	public void onListItemClick(ListView l, View v, int position, long id) {// лист
+																			// файлов
+																			// получать
+																			// через
+																			// Loader
 		super.onListItemClick(l, v, position, id);
-		if (fileInfoItems.get(position).isCollection()) {
-			updateList(setCurrentDir(fileInfoItems.get(position).getFullPath(),
-					false));
-			getActivity().setTitle(getCurrentDir());
-		} else
-			fileManagment.openFile(fileInfoItems.get(position));
+		switch (fileManagment.getCurrentStorage()) {
+		case Constants.SD_CARD_STORAGE:
+			if (currentDirFileInfoItems.get(position).isCollection()) {
+				setCurrentDirFileInfoItems(fileManagment.getList(setCurrentDir(
+						currentDirFileInfoItems.get(position).getFullPath(),
+						false)));
+				updateList(getCurrentDirFileInfoItems());
+				getActivity().setTitle(getCurrentDir());
+			} else
+				FileManagment.getInstance().openFile(
+						currentDirFileInfoItems.get(position), this);
+			break;
+		case Constants.YANDEX_DISK_STORAGE:
+			if (currentDirFileInfoItems.get(position).isCollection()) {
+				setCurrentDir(currentDirFileInfoItems.get(position)
+						.getFullPath(), false);
+				getLoaderManager().destroyLoader(Constants.YANDEX_DISK_LOADER);
+				getLoaderManager().initLoader(Constants.YANDEX_DISK_LOADER,
+						null, LoadersControl.getInstance());
+			} else {
+				Toast.makeText(getActivity(), "Тут будет скачивание файла",
+						Toast.LENGTH_SHORT).show();
+			}
+			break;
+		default:
+			break;
+		}
+
 	}
 
-	private String setCurrentDir(String string, boolean getParent) {
+	public String setCurrentDir(String string, boolean getParent) {
 		if (getParent) {
 			return currentDir = new File(string).getParent();
 		}
 		return currentDir = string;
 	}
 
-	public void updateList(String path) {
-		
-		fileInfoItems = fileManagment.getList(path);
-		overviewAdapter = new SystemOverviewAdapter(
-				getActivity(), fileInfoItems);
-		setListAdapter(overviewAdapter);
+	public void updateList(ArrayList<FileInfoItem> items) {
+		// getListView().setAdapter(null);
+		overviewAdapter = new SystemOverviewAdapter(getActivity(), items);
+		Log.d("myLog", "liat not updated");
+		try {
+			setListAdapter(overviewAdapter);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		Log.d("myLog", "liat updated");
+	}
+
+	public void setCurrentDirFileInfoItems(ArrayList<FileInfoItem> arrayList) {
+		currentDirFileInfoItems = arrayList;
+	}
+
+	private ArrayList<FileInfoItem> getCurrentDirFileInfoItems() {
+		return currentDirFileInfoItems;
+	}
+
+	public SystemOverviewAdapter getAdapter() {
+		return overviewAdapter;
+	}
+
+	public void removeAdapter() {
+		overviewAdapter = null;
 	}
 }

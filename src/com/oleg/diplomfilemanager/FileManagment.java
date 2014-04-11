@@ -11,26 +11,51 @@ import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 public class FileManagment {
 
+	private static FileManagment instance;
+	private Context context;
+	private SharedPreferences preferences;
+
+	private FileManagment(Context context) {
+		this.context = context;
+	}
+
+	public static void initInstance(Context context) {
+		if (instance == null) {
+			instance = new FileManagment(context);
+		}
+	}
+
+	public static synchronized FileManagment getInstance() {
+		return instance;
+	}
+
 	private final String LOG_TAG = "myLogs";
 	private final int KB = 1024;
 	private final int MB = KB * KB;
 	private final int GB = MB * KB;
-	private final String ROOT = Environment.getExternalStorageDirectory()
-			.getPath();
 
-	private SystemOverviewFragment sOverview;
 	private FileInfoItem.Builder builder;
 
-	public FileManagment(SystemOverviewFragment systemOverview) {
-		sOverview = systemOverview;
+	public void setCerrentStorage(int storageID) {
+		preferences = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		preferences.edit().putInt(Constants.STORAGE_ID, storageID).commit();
+	}
+	
+	public int getCurrentStorage() {
+		preferences = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		return preferences.getInt(Constants.STORAGE_ID, -1);
 	}
 
 	public String getMIME(File file) {
@@ -46,9 +71,9 @@ public class FileManagment {
 		return type;
 	}
 
-	public String getLastModif(File file) {
+	public String getLastModif(long lastModified) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-		return dateFormat.format(file.lastModified());
+		return dateFormat.format(lastModified);
 	}
 
 	public String getFileSizeOrFilesInside(File file) {
@@ -75,6 +100,21 @@ public class FileManagment {
 
 	}
 
+	public String getFileSizeToString(long fileSize) {
+
+		double l = (double) fileSize;
+
+		if (l > GB)
+			return String.format("%.2f Gb", (double) l / GB);
+		else if (l < GB && l > MB)
+			return String.format("%.2f Mb", (double) l / MB);
+		else if (l < MB && l > KB)
+			return String.format("%.2f Kb", (double) l / KB);
+		else
+			return String.format("%.2f Kb", l);
+
+	}
+
 	public String getFilePermissions(File file) {
 		String permissions = "";
 		if (file.isDirectory())
@@ -91,7 +131,7 @@ public class FileManagment {
 		File[] temp = file.listFiles();
 		ArrayList<FileInfoItem> filesInfoList = new ArrayList<FileInfoItem>();
 		builder = new FileInfoItem.Builder();
-		if (!currentFile.equals(ROOT)) {
+		if (!currentFile.equals(Constants.SD_CARD)) {
 			builder.setFullPath(new File(currentFile).getParent());
 			builder.setDisplayName(" ... ");
 			builder.addCollection(true);
@@ -102,7 +142,7 @@ public class FileManagment {
 			builder.setFullPath(temp[i].getAbsolutePath());
 			builder.setDisplayName(temp[i].getName());
 			builder.setContentLength(getFileSizeOrFilesInside(temp[i]));
-			builder.setLastModified(getLastModif(temp[i]));
+			builder.setLastModified(getLastModif(temp[i].lastModified()));
 			builder.setContentType(getMIME(temp[i]));
 			builder.addCollection(!temp[i].isFile());
 			builder.addReadable(temp[i].canRead());
@@ -120,7 +160,8 @@ public class FileManagment {
 		return file.toURI().toString();
 	}
 
-	public boolean openFile(FileInfoItem fileInfoItem) {
+	public boolean openFile(FileInfoItem fileInfoItem,
+			SystemOverviewFragment systemOverviewFragment) {
 		Intent open = new Intent();
 		open.setAction(android.content.Intent.ACTION_VIEW);
 		try {
@@ -129,10 +170,12 @@ public class FileManagment {
 					fileInfoItem.getContentType());
 			Log.d(LOG_TAG, "Open try " + fileInfoItem.getContentType());
 			open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			sOverview.startActivity(open);
+			systemOverviewFragment.startActivity(open);
 			return true;
 		} catch (ActivityNotFoundException e) {
-			Log.d(LOG_TAG, "Open " + fileInfoItem.getContentType());
+			Log.d(LOG_TAG, "Open " + fileInfoItem.getContentType());// вызывать
+																	// открыть
+																	// как
 			return false;
 		}
 	}

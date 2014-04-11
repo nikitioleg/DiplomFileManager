@@ -13,12 +13,10 @@ import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity {
 
-	private final String SD_CARD = Environment.getExternalStorageDirectory()
-			.getPath();
-
 	private SystemOverviewFragment systemOverview;
 	private SlidingMenu slidingMenu;
 	private YandexDiskAuthorization yandexDiskClient;
+	private SlidingMenuLayout slidingMenuLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,17 +24,14 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 		systemOverview = new SystemOverviewFragment();
 		yandexDiskClient = new YandexDiskAuthorization(getApplicationContext());
-		
 		Intent intent = getIntent();
-		
 		if (intent != null && intent.getData() != null) {
             yandexDiskClient.onLogin(getIntent());
         }
-		
 		if (savedInstanceState == null) {
 			createSlidingmenu();
 			Bundle bundle = new Bundle();
-			bundle.putString("displayed_directory",SD_CARD);
+			bundle.putString("displayed_directory",Constants.SD_CARD);
 			systemOverview.setArguments(bundle);
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, systemOverview).commit();
@@ -45,6 +40,7 @@ public class MainActivity extends ActionBarActivity {
 
 	private void createSlidingmenu() {
 		slidingMenu = new SlidingMenu(this);
+		slidingMenuLayout=new SlidingMenuLayout(this,slidingMenu, systemOverview);
 		slidingMenu.setMode(SlidingMenu.LEFT);
 		slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 		slidingMenu.setShadowWidthRes(R.dimen.slidingmenu_shadow_width);
@@ -52,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
 		slidingMenu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
 		slidingMenu.setFadeDegree(0.35f);
 		slidingMenu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		slidingMenu.setMenu(new SlidingMenuLayout(this,slidingMenu, systemOverview));
+		slidingMenu.setMenu(slidingMenuLayout);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 	

@@ -12,6 +12,9 @@ import javax.crypto.spec.IvParameterSpec;
 
 import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.R;
+import com.oleg.diplomfilemanager.R.drawable;
+import com.oleg.diplomfilemanager.R.id;
+import com.oleg.diplomfilemanager.R.layout;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -43,7 +46,7 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		lInflater = (LayoutInflater) context
 				.getSystemService(context.LAYOUT_INFLATER_SERVICE);
 
-	//	getStorage();
+		// getStorage();
 	}
 
 	static class ViewHolder {
@@ -52,6 +55,14 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		public TextView tvLastEdit;
 		public TextView tvFileSize;
 	}
+
+//	public void setData(ArrayList<FileInfoItem> data) {
+//		fileInfoItems.clear();
+//		if (data != null) {
+//			data.addAll(data);// нафига
+//
+//		}
+//	}
 
 	@Override
 	public int getCount() {
@@ -186,7 +197,7 @@ public class SystemOverviewAdapter extends BaseAdapter {
 
 	private ArrayList<String> getStorage() {
 		return null;
-		
+
 	}
 
 	public ArrayList<String> prepareStorage() {
