@@ -1,6 +1,7 @@
 package com.oleg.diplomfilemanager;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 
 public class MyApp extends Application {
 	@Override

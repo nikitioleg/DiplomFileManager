@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">DiplomFileManager</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">FileManagerMain</string>
     <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="search">Поиск</string>
+    <string name="SearchIn">Искать в:</string>
+    <string name="currentDir">текущей папке</string>
+    <string name="allDir">везде</string>
+    <string name="Type">Тип файла</string>
+    <string name="option">Опции</string>
+    <string name="notCaseSensitive">Без учета регистра</string>
+    <string name="all">Искать в подпапках</string>
 
 </resources>

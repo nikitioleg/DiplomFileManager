@@ -2,7 +2,10 @@ package com.oleg.diplomfilemanager;
 
 import java.io.File;
 
-public class FileInfoItem {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class FileInfoItem implements Parcelable {
 
 	private FileInfoItem(String displayName, String lastModified,
 			String fullPath, String contentType, String publicUrl,
@@ -21,6 +24,20 @@ public class FileInfoItem {
 		this.contentLength = contentLength;
 		this.isPreviousFolder = isPreviousFolder;
 
+	}
+
+	private FileInfoItem(Parcel parcel) {
+		displayName = parcel.readString();
+		lastModified = parcel.readString();
+		fullPath = parcel.readString();
+		contentType = parcel.readString();
+		publicUrl = parcel.readString();
+		isCollection = parcel.readByte() > 0;
+		isReadable = parcel.readByte() > 0;
+		isWritable = parcel.readByte() > 0;
+		isVisible = parcel.readByte() > 0;
+		contentLength = parcel.readString();
+		isPreviousFolder = parcel.readByte() > 0;
 	}
 
 	private String displayName, lastModified, fullPath, contentType, publicUrl,
@@ -94,9 +111,9 @@ public class FileInfoItem {
 		return fullPath;
 	}
 
-	public String getName() {
-		return new File(fullPath).getName();
-	}
+	// public String getName() {
+	// return new File(fullPath).getName();
+	// }
 
 	public String getDisplayName() {
 		return displayName;
@@ -164,4 +181,37 @@ public class FileInfoItem {
 				+ " isVisible " + isVisible + " contentLength " + contentLength
 				+ " isPreviousFolder " + isPreviousFolder;
 	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int flags) {
+		parcel.writeString(displayName);
+		parcel.writeString(lastModified);
+		parcel.writeString(fullPath);
+		parcel.writeString(contentType);
+		parcel.writeString(publicUrl);
+		parcel.writeByte((byte) (isCollection ? 1 : 0));
+		parcel.writeByte((byte) (isReadable ? 1 : 0));
+		parcel.writeByte((byte) (isWritable ? 1 : 0));
+		parcel.writeByte((byte) (isVisible ? 1 : 0));
+		parcel.writeString(contentLength);
+		parcel.writeByte((byte) (isPreviousFolder ? 1 : 0));
+	}
+	
+	 public static final Parcelable.Creator<FileInfoItem> CREATOR = new Creator<FileInfoItem>() {
+		
+		@Override
+		public FileInfoItem[] newArray(int size) {
+			return new FileInfoItem[size];
+		}
+		
+		@Override
+		public FileInfoItem createFromParcel(Parcel parcel) {
+			return new FileInfoItem(parcel);
+		}
+	};
 }

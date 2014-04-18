@@ -7,15 +7,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import javax.crypto.spec.IvParameterSpec;
-
 import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.R;
-import com.oleg.diplomfilemanager.R.drawable;
-import com.oleg.diplomfilemanager.R.id;
-import com.oleg.diplomfilemanager.R.layout;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -45,8 +38,6 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		this.fileInfoItems = fileInfoItems;
 		lInflater = (LayoutInflater) context
 				.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-
-		// getStorage();
 	}
 
 	static class ViewHolder {
@@ -56,13 +47,12 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		public TextView tvFileSize;
 	}
 
-//	public void setData(ArrayList<FileInfoItem> data) {
-//		fileInfoItems.clear();
-//		if (data != null) {
-//			data.addAll(data);// нафига
-//
-//		}
-//	}
+	public void setData(ArrayList<FileInfoItem> data) {
+		fileInfoItems.clear();
+		if (data != null) {
+			fileInfoItems.addAll(data);
+		}
+	}
 
 	@Override
 	public int getCount() {
@@ -97,7 +87,8 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		} else {
 			viewHolder = (ViewHolder) view.getTag();
 		}
-		viewHolder.tvDirName.setText(fileInfoItems.get(position).getName());
+		String string = fileInfoItems.get(position).getDisplayName();
+		viewHolder.tvDirName.setText(string);
 		viewHolder.tvLastEdit.setText(fileInfoItems.get(position)
 				.getLastModified());
 		viewHolder.tvFileSize.setText(fileInfoItems.get(position)
@@ -193,11 +184,6 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		}
 
 		return bmpIcon;
-	}
-
-	private ArrayList<String> getStorage() {
-		return null;
-
 	}
 
 	public ArrayList<String> prepareStorage() {

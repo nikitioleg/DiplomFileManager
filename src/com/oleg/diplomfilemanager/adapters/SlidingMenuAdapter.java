@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.oleg.diplomfilemanager.R;
-import com.oleg.diplomfilemanager.R.id;
-import com.oleg.diplomfilemanager.R.layout;
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;

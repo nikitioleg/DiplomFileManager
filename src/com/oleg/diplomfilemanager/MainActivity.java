@@ -5,6 +5,7 @@ import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
 
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.KeyEvent;
@@ -22,25 +23,33 @@ public class MainActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		// clearPreferences();
 		systemOverview = new SystemOverviewFragment();
 		yandexDiskClient = new YandexDiskAuthorization(getApplicationContext());
 		Intent intent = getIntent();
 		if (intent != null && intent.getData() != null) {
-            yandexDiskClient.onLogin(getIntent());
-        }
+			yandexDiskClient.onLogin(getIntent());
+		}
 		if (savedInstanceState == null) {
 			createSlidingmenu();
 			Bundle bundle = new Bundle();
-			bundle.putString("displayed_directory",Constants.SD_CARD);
+			bundle.putString("displayed_directory", Constants.SD_CARD);
 			systemOverview.setArguments(bundle);
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, systemOverview).commit();
 		}
 	}
 
+	private void clearPreferences() {
+		SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+		preferences.edit().putString(Constants.PREFERENCES_KEY_CUT, null)
+				.putString(Constants.PREFERENCES_KEY_COPY, null).commit();
+	}
+
 	private void createSlidingmenu() {
 		slidingMenu = new SlidingMenu(this);
-		slidingMenuLayout=new SlidingMenuLayout(this,slidingMenu, systemOverview);
+		slidingMenuLayout = new SlidingMenuLayout(this, slidingMenu,
+				systemOverview);
 		slidingMenu.setMode(SlidingMenu.LEFT);
 		slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 		slidingMenu.setShadowWidthRes(R.dimen.slidingmenu_shadow_width);
@@ -51,7 +60,6 @@ public class MainActivity extends ActionBarActivity {
 		slidingMenu.setMenu(slidingMenuLayout);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
-	
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -67,13 +75,6 @@ public class MainActivity extends ActionBarActivity {
 			this.finish();
 		}
 		return false;
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
 	}
 
 	@Override
