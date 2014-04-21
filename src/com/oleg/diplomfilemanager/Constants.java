@@ -7,6 +7,7 @@ public class Constants {
 	public static final String SD_CARD = Environment
 			.getExternalStorageDirectory().getPath();
 	public static final String ROOT = "/";
+	public static final String SEARCH_MAIN_DIR = "/storage";
 	public static final String STORAGE_ID = "sterage_id";
 	public static final int YANDEX_DISK_STORAGE = 1;
 	public static final int SD_CARD_STORAGE = 2;

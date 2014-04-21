@@ -87,8 +87,7 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		} else {
 			viewHolder = (ViewHolder) view.getTag();
 		}
-		String string = fileInfoItems.get(position).getDisplayName();
-		viewHolder.tvDirName.setText(string);
+		viewHolder.tvDirName.setText(fileInfoItems.get(position).getDisplayName());
 		viewHolder.tvLastEdit.setText(fileInfoItems.get(position)
 				.getLastModified());
 		viewHolder.tvFileSize.setText(fileInfoItems.get(position)
@@ -98,7 +97,7 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		return view;
 	}
 
-	public static void setFileIcon(final FileInfoItem fileInfoItem,
+	private void setFileIcon(final FileInfoItem fileInfoItem,
 			ImageView imageView) {
 
 		if (fileInfoItem.isPreviousFolder()) {
@@ -165,7 +164,7 @@ public class SystemOverviewAdapter extends BaseAdapter {
 		}
 	}
 
-	private static Bitmap getApkIcon(String fullPath) {
+	private Bitmap getApkIcon(String fullPath) {
 		Bitmap bmpIcon = null;
 
 		PackageInfo packageInfo = context.getPackageManager()

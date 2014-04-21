@@ -1,4 +1,4 @@
-package dialogs;
+package com.oleg.diplomfilemanager.dialogs;
 
 import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.FileManagment;

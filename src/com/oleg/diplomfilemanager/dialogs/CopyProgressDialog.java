@@ -1,4 +1,4 @@
-package dialogs;
+package com.oleg.diplomfilemanager.dialogs;
 
 import java.io.File;
 

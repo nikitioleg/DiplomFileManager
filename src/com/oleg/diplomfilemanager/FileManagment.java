@@ -18,9 +18,9 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.oleg.diplomfilemanager.dialogs.CopyProgressDialog;
 import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
 
-import dialogs.CopyProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -174,21 +174,25 @@ public class FileManagment {
 			filesInfoList.add(builder.build());
 		}
 		for (int i = 0; i < temp.length; i++) {
-			builder.setFullPath(temp[i].getAbsolutePath());
-			builder.setDisplayName(temp[i].getName());
-			builder.setContentLength(getFileSizeOrFilesInside(temp[i]));
-			builder.setLastModified(getLastModif(temp[i].lastModified()));
-			builder.setContentType(getMIME(temp[i]));
-			builder.addCollection(!temp[i].isFile());
-			builder.addReadable(temp[i].canRead());
-			builder.addWritable(temp[i].canWrite());
-			builder.setVisible(!temp[i].isHidden());
-			builder.setPublicUrl(getURL(temp[i]));
-			builder.addPreviousFolder(false);
-			filesInfoList.add(builder.build());
+			filesInfoList.add(getFileItem(builder, temp[i]).build());
 		}
-
 		return filesInfoList;
+	}
+
+	private FileInfoItem.Builder getFileItem(FileInfoItem.Builder mBuilder,
+			File file) {
+		mBuilder.setFullPath(file.getAbsolutePath());
+		mBuilder.setDisplayName(file.getName());
+		mBuilder.setContentLength(getFileSizeOrFilesInside(file));
+		mBuilder.setLastModified(getLastModif(file.lastModified()));
+		mBuilder.setContentType(getMIME(file));
+		mBuilder.addCollection(!file.isFile());
+		mBuilder.addReadable(file.canRead());
+		mBuilder.addWritable(file.canWrite());
+		mBuilder.setVisible(!file.isHidden());
+		mBuilder.setPublicUrl(getURL(file));
+		mBuilder.addPreviousFolder(false);
+		return mBuilder;
 	}
 
 	private String getURL(File file) {
@@ -332,8 +336,8 @@ public class FileManagment {
 		}
 	}
 
-	public void searchFile(Bundle bundle, String current) {
-		ArrayList<String> matchList = new ArrayList<String>();
+	public ArrayList<FileInfoItem> searchFile(Bundle bundle, String current) {
+		ArrayList<FileInfoItem> matchList = new ArrayList<FileInfoItem>();
 		File currentDir = new File(current);
 		String keyWord = bundle.getString("key_word");
 		boolean currentDirSearch = bundle.getBoolean("current_dir", true);
@@ -343,12 +347,13 @@ public class FileManagment {
 		matchList.clear();
 		Log.d("myLogs", "Поиск В " + currentDir.getAbsolutePath());
 		searchForMatches(currentDir, keyWord, currentDirSearch, lowerCase,
-				subfolder, searchFileType,matchList);
+				subfolder, searchFileType, matchList);
+		return matchList;
 	}
 
 	private void searchForMatches(File currentDir, String keyWord,
 			boolean currentDirSearch, boolean lowerCase, boolean subfolder,
-			String searchFileType, ArrayList<String> matchList) {
+			String searchFileType, ArrayList<FileInfoItem> matchList) {
 		ArrayList<File> files;
 		if (currentDirSearch)
 			if (currentDir.listFiles() != null) {
@@ -359,7 +364,7 @@ public class FileManagment {
 			}
 		else {
 			files = new ArrayList<File>(Arrays.asList(new File(
-					Constants.ROOT).listFiles()));
+					Constants.SEARCH_MAIN_DIR).listFiles()));
 		}
 
 		Iterator<File> iterator = files.iterator();
@@ -369,14 +374,14 @@ public class FileManagment {
 			try {
 				if (getMIME(file).indexOf(searchFileType) > -1) {
 					if (match(file, keyWord, lowerCase)) {
-						matchList.add(file.getAbsolutePath());
+						handleMatch(matchList, file);
 					}
 
 				}
 			} catch (NullPointerException e) {
 				if (searchFileType.equalsIgnoreCase("/"))
 					if (match(file, keyWord, lowerCase)) {
-						matchList.add(file.getAbsolutePath());
+						handleMatch(matchList, file);
 					}
 				if (file.isDirectory() && subfolder) {
 					searchForMatches(file, keyWord, true, lowerCase, subfolder,
@@ -405,6 +410,11 @@ public class FileManagment {
 
 		match = matcher.find();
 		return match;
+	}
+
+	private void handleMatch(ArrayList<FileInfoItem> infoItems, File matchedFile) {
+		builder = new FileInfoItem.Builder();
+		infoItems.add(getFileItem(builder, matchedFile).build());
 	}
 
 }

@@ -61,17 +61,18 @@ public class MainActivity extends ActionBarActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			systemOverview.back();
-		}
-		return false;
-	}
+//	@Override
+//	public boolean onKeyUp(int keyCode, KeyEvent event) {
+//		if (keyCode == KeyEvent.KEYCODE_BACK) {
+//			systemOverview.back();
+//		}
+//		return false;
+//	}
 
 	@Override
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			clearPreferences();
 			this.finish();
 		}
 		return false;

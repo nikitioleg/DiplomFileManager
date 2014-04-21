@@ -4,9 +4,8 @@ import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.support.v4.app.ListFragment;
 
+import com.oleg.diplomfilemanager.dialogs.CopyProgressDialog;
 import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
-
-import dialogs.CopyProgressDialog;
 
 public class LongFileOperatoin extends Thread {
 

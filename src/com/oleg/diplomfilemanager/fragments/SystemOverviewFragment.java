@@ -8,12 +8,13 @@ import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.FileManagment;
 import com.oleg.diplomfilemanager.LoadersControl;
 import com.oleg.diplomfilemanager.LongFileOperatoin;
+import com.oleg.diplomfilemanager.R;
 import com.oleg.diplomfilemanager.adapters.SystemOverviewAdapter;
+import com.oleg.diplomfilemanager.dialogs.DeleteDialog;
+import com.oleg.diplomfilemanager.dialogs.NewFileDirDialog;
+import com.oleg.diplomfilemanager.dialogs.RenameDialog;
+import com.oleg.diplomfilemanager.dialogs.SearchDialog;
 
-import dialogs.DeleteDialog;
-import dialogs.NewFileDirDialog;
-import dialogs.RenameDialog;
-import dialogs.SearchDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -39,12 +40,9 @@ public class SystemOverviewFragment extends ListFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		fileManagment = FileManagment.getInstance();
-		// overviewAdapter = new SystemOverviewAdapter(getActivity(),
-		// getCurrentDirFileInfoItems());
-		// setListAdapter(overviewAdapter);
 		updateList(fileManagment.getList(getArguments().getString(
 				Constants.DISP_DIR)));
-		getActivity().setTitle(getCurrentDir());
+		getActivity().setTitle(getArguments().getString(Constants.DISP_DIR));
 		registerForContextMenu(getListView());
 		setHasOptionsMenu(true);
 	}
@@ -73,10 +71,16 @@ public class SystemOverviewFragment extends ListFragment {
 		switch (fileManagment.getCurrentStorage()) {
 		case Constants.SD_CARD_STORAGE:
 			if (currentDirFileInfoItems.get(position).isCollection()) {
-				updateList(fileManagment.getList(setCurrentDir(
-						currentDirFileInfoItems.get(position).getFullPath(),
-						false)));
-				getActivity().setTitle(getCurrentDir());
+
+				setCurrentDir(currentDirFileInfoItems.get(position)
+						.getFullPath(), false);
+				SystemOverviewFragment fragment = new SystemOverviewFragment();
+				Bundle bundle = new Bundle();
+				bundle.putString(Constants.DISP_DIR, getCurrentDir());
+				fragment.setArguments(bundle);
+				getFragmentManager().beginTransaction()
+						.replace(R.id.container, fragment).addToBackStack(null)
+						.commit();
 			} else
 				FileManagment.getInstance().openFile(
 						currentDirFileInfoItems.get(position), this);
@@ -132,10 +136,12 @@ public class SystemOverviewFragment extends ListFragment {
 			updateList(fileManagment.getList(currentDir));
 			break;
 		case Constants.PHONE_STORAGE_CREATE_FILE_DIR:
-			NewFileDirDialog.getInstance(this,currentDir).show(getFragmentManager(), "create_file_or_dir");
+			NewFileDirDialog.getInstance(this, currentDir).show(
+					getFragmentManager(), "create_file_or_dir");
 			break;
 		case Constants.PHONE_STORAGE_SEARCH:
-			SearchDialog.getInstanse(currentDir).show(getFragmentManager(), "search");
+			SearchDialog.getInstanse(currentDir).show(getFragmentManager(),
+					"search");
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -186,8 +192,8 @@ public class SystemOverviewFragment extends ListFragment {
 			break;
 		case Constants.PHONE_STORAGE_RENAME:
 			RenameDialog.getInstance(
-					currentDirFileInfoItems.get(info.position), true, false, this,
-					currentDir).show(getFragmentManager(), "rename");
+					currentDirFileInfoItems.get(info.position), true, false,
+					this, currentDir).show(getFragmentManager(), "rename");
 			break;
 		case Constants.PHONE_STORAGE_PROPERTIES:
 
@@ -197,23 +203,23 @@ public class SystemOverviewFragment extends ListFragment {
 		return super.onContextItemSelected(item);
 	}
 
-	public void back() {
-		if (currentDirFileInfoItems.get(0).getFullPath()
-				.equals(new File(currentDir).getParent())) {
-			updateList(fileManagment.getList(currentDirFileInfoItems.get(0)
-					.getFullPath()));
-			setCurrentDir(currentDir, true);
-			getActivity().setTitle(getCurrentDir());
-		} else
-			return;
-	}
+//	public void back() {
+//		if (currentDirFileInfoItems.get(0).getFullPath()
+//				.equals(new File(currentDir).getParent())) {
+//			updateList(fileManagment.getList(currentDirFileInfoItems.get(0)
+//					.getFullPath()));
+//			setCurrentDir(currentDir, true);
+//			getActivity().setTitle(getCurrentDir());
+//		} else
+//			return;
+//	}
 
 	public String getCurrentDir() {
 		return currentDir;
 	}
 
 	public String setCurrentDir(String string, boolean getParent) {
-		if (getParent) {
+		if (getParent) {// нужно для возврата методом back
 			return currentDir = new File(string).getParent();
 		}
 		return currentDir = string;

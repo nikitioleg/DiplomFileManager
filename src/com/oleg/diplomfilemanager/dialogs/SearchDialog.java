@@ -1,7 +1,11 @@
-package dialogs;
+package com.oleg.diplomfilemanager.dialogs;
 
+import java.util.ArrayList;
+
+import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.FileManagment;
 import com.oleg.diplomfilemanager.R;
+import com.oleg.diplomfilemanager.fragments.SearchResultFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -82,7 +86,16 @@ public class SearchDialog extends DialogFragment implements
 
 		Log.d("myLogs", "spinner "
 				+ spinnerFileType.getSelectedItem().toString());
-		FileManagment.getInstance().searchFile(bundle, currentDir);
+		ArrayList<FileInfoItem> matchList = FileManagment.getInstance()
+				.searchFile(bundle, currentDir);
+		Bundle args = new Bundle();
+		args.putParcelableArrayList("matches", matchList);
+		SearchResultFragment resultFragment = new SearchResultFragment();
+		resultFragment.setArguments(args);
+		getFragmentManager().beginTransaction()
+				.replace(R.id.container, resultFragment).addToBackStack(null)
+				.commit();
+		dismiss();
 	}
 
 }
