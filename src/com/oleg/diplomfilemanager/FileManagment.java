@@ -14,6 +14,7 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +30,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -39,6 +41,7 @@ public class FileManagment {
 	private static FileManagment instance;
 	private Context context;
 	private SharedPreferences preferences;
+	private  String currentDir = Constants.SD_CARD;
 
 	private FileManagment(Context context) {
 		this.context = context;
@@ -60,6 +63,14 @@ public class FileManagment {
 	private final int GB = MB * KB;
 
 	private FileInfoItem.Builder builder;
+	
+	public String getCurrentDir() {
+		return currentDir;
+	}
+
+	public String setCurrentDir(String string) {
+		return currentDir = string;
+	}
 
 	public void setCerrentStorage(int storageID) {
 		preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -200,7 +211,7 @@ public class FileManagment {
 	}
 
 	public boolean openFile(FileInfoItem fileInfoItem,
-			SystemOverviewFragment systemOverviewFragment) {
+			FragmentActivity fragmentActivity) {
 		Intent open = new Intent();
 		open.setAction(android.content.Intent.ACTION_VIEW);
 		try {
@@ -209,7 +220,7 @@ public class FileManagment {
 					fileInfoItem.getContentType());
 			Log.d(LOG_TAG, "Open try " + fileInfoItem.getContentType());
 			open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			systemOverviewFragment.startActivity(open);
+			fragmentActivity.startActivity(open);
 			return true;
 		} catch (ActivityNotFoundException e) {
 			Log.d(LOG_TAG, "Open " + fileInfoItem.getContentType());
@@ -336,9 +347,9 @@ public class FileManagment {
 		}
 	}
 
-	public ArrayList<FileInfoItem> searchFile(Bundle bundle, String current) {
+	public ArrayList<FileInfoItem> searchFile(Bundle bundle) {
 		ArrayList<FileInfoItem> matchList = new ArrayList<FileInfoItem>();
-		File currentDir = new File(current);
+		File currentDir = new File(getCurrentDir());
 		String keyWord = bundle.getString("key_word");
 		boolean currentDirSearch = bundle.getBoolean("current_dir", true);
 		boolean lowerCase = bundle.getBoolean("lower_case", true);

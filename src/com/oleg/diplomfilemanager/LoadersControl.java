@@ -41,7 +41,7 @@ public class LoadersControl implements
 		Log.d("myLog", "onCreateLoader");
 		if (id == Constants.YANDEX_DISK_LOADER) {
 			return new YandexDiskLoader(context, getCredentials(),
-					systemOverview.getCurrentDir());
+					FileManagment.getInstance().getCurrentDir());
 		} else {
 			return null;
 		}

@@ -3,6 +3,7 @@ package com.oleg.diplomfilemanager;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.ActionBarActivity;
 
 import com.oleg.diplomfilemanager.dialogs.CopyProgressDialog;
 import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
@@ -16,9 +17,9 @@ public class LongFileOperatoin extends Thread {
 	private FileInfoItem fileInfoItem;
 
 	public LongFileOperatoin(int operationId, FileInfoItem fileInfoItem,
-			String currentPath, SystemOverviewFragment overviewFragment) {
+			SystemOverviewFragment overviewFragment) {
 		this.operationId = operationId;
-		this.currentPath = currentPath;
+		this.currentPath = FileManagment.getInstance().getCurrentDir();
 		this.overviewFragment = overviewFragment;
 		this.fileInfoItem = fileInfoItem;
 		progress = new ProgressDialog(
@@ -42,9 +43,28 @@ public class LongFileOperatoin extends Thread {
 
 							}
 						});
-				FileManagment.getInstance().delete(fileInfoItem.getFullPath());
+				int storageID = FileManagment.getInstance().getCurrentStorage();
+				switch (storageID) {
+				case Constants.SD_CARD_STORAGE:
+					FileManagment.getInstance().delete(
+							fileInfoItem.getFullPath());
+					break;
+				case Constants.YANDEX_DISK_STORAGE:
+					YandexDiskManagment.getInstance().deleteYandexDiskFile(
+							fileInfoItem);
+					break;
+				}
+
 			} finally {
-				updateList();
+				int storageID = FileManagment.getInstance().getCurrentStorage();
+				switch (storageID) {
+				case Constants.SD_CARD_STORAGE:
+					updateFileList();
+					break;
+				case Constants.YANDEX_DISK_STORAGE:
+					updateYandexDiskFileList();
+					break;
+				}
 			}
 
 			break;
@@ -55,7 +75,7 @@ public class LongFileOperatoin extends Thread {
 				if (inFullPath == null)
 					break;
 				CopyProgressDialog copyProgressDialog = CopyProgressDialog
-						.getInstance(overviewFragment,inFullPath);
+						.getInstance(overviewFragment, inFullPath);
 				copyProgressDialog.show(overviewFragment.getFragmentManager(),
 						"copy_progress_dialog");
 				FileManagment.getInstance().copy(inFullPath,
@@ -66,14 +86,32 @@ public class LongFileOperatoin extends Thread {
 				}
 				copyProgressDialog.dismiss();
 			} finally {
-				updateList();
+				updateFileList();
 				delCopyPref();
 			}
 			break;
 		}
 	}
 
-	private void updateList() {
+	private void updateYandexDiskFileList() {
+		overviewFragment.getActivity().runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				((ActionBarActivity) overviewFragment.getActivity())
+						.getSupportLoaderManager().destroyLoader(
+								Constants.YANDEX_DISK_LOADER);
+				((ActionBarActivity) overviewFragment.getActivity())
+						.getSupportLoaderManager().initLoader(
+								Constants.YANDEX_DISK_LOADER, null,
+								LoadersControl.getInstance());
+
+			}
+		});
+		progress.dismiss();
+	}
+
+	private void updateFileList() {
 		((ListFragment) overviewFragment).getActivity().runOnUiThread(
 				new Runnable() {
 

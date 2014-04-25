@@ -31,6 +31,10 @@ public class SearchResultAdapter extends BaseAdapter {
 
 	}
 
+	public void setData(ArrayList<FileInfoItem> matches) {
+		fileInfoItems = matches;
+	}
+
 	@Override
 	public int getCount() {
 		return fileInfoItems.size();
@@ -70,8 +74,7 @@ public class SearchResultAdapter extends BaseAdapter {
 		return view;
 	}
 
-	private void setFileIcon(FileInfoItem fileInfoItem,
-			ImageView imageView) {
+	private void setFileIcon(FileInfoItem fileInfoItem, ImageView imageView) {
 
 		if (fileInfoItem.isCollection()) {
 			imageView.setImageResource(R.drawable.folder);
@@ -109,6 +112,8 @@ public class SearchResultAdapter extends BaseAdapter {
 			else if (fileExp.equalsIgnoreCase("xml"))
 				imageView.setImageResource(R.drawable.xml);
 			else if (fileExp.equalsIgnoreCase("apk"))
+				imageView.setImageResource(R.drawable.apk);
+			else
 				imageView.setImageResource(R.drawable.file);
 		}
 	}

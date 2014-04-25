@@ -74,7 +74,7 @@ public class SlidingMenuLayout extends LinearLayout implements
 			if (yandexDiskAuthorization.startYandexDiskAuthorization()) {
 				FileManagment.getInstance().setCerrentStorage(
 						Constants.YANDEX_DISK_STORAGE);
-				systemOverview.setCurrentDir(Constants.ROOT, false);
+				FileManagment.getInstance().setCurrentDir(Constants.ROOT);
 				LoadersControl.initInstance(ctx, systemOverview);
 				((ActionBarActivity) ctx).getSupportLoaderManager().initLoader(
 						Constants.YANDEX_DISK_LOADER, null, LoadersControl.getInstance());

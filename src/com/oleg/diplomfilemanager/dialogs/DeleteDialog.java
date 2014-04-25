@@ -9,24 +9,25 @@ import android.support.v4.app.DialogFragment;
 
 import com.oleg.diplomfilemanager.Constants;
 import com.oleg.diplomfilemanager.FileInfoItem;
+import com.oleg.diplomfilemanager.FileManagment;
 import com.oleg.diplomfilemanager.LongFileOperatoin;
+import com.oleg.diplomfilemanager.fragments.SearchResultFragment;
 import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
 
 public class DeleteDialog extends DialogFragment {
 
-	static SystemOverviewFragment overviewFragment;
-	static String currentDir;
-
+	private static SystemOverviewFragment overviewFragment;
+	
 	public static DeleteDialog getInstance(FileInfoItem fileInfoItem,
-			String string, SystemOverviewFragment systemOverviewFragment) {
+			SystemOverviewFragment systemOverviewFragment) {
 		overviewFragment = systemOverviewFragment;
-		currentDir = string;
 		Bundle bundle = new Bundle();
 		bundle.putParcelable("file_info_item", fileInfoItem);
 		DeleteDialog deleteDialog = new DeleteDialog();
 		deleteDialog.setArguments(bundle);
 		return deleteDialog;
 	}
+
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -40,8 +41,8 @@ public class DeleteDialog extends DialogFragment {
 						bundle = getArguments();
 						FileInfoItem fileInfoItem = bundle
 								.getParcelable("file_info_item");
-											LongFileOperatoin operatoin = new LongFileOperatoin(
-								Constants.PHONE_STORAGE_DELETE,fileInfoItem , currentDir,
+						LongFileOperatoin operatoin = new LongFileOperatoin(
+								Constants.PHONE_STORAGE_DELETE, fileInfoItem,
 								overviewFragment);
 						operatoin.start();
 					}
@@ -58,4 +59,5 @@ public class DeleteDialog extends DialogFragment {
 	public void onDismiss(DialogInterface dialog) {
 		super.onDismiss(dialog);
 	}
+
 }

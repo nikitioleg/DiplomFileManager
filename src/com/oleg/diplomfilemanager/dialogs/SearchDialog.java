@@ -6,6 +6,7 @@ import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.FileManagment;
 import com.oleg.diplomfilemanager.R;
 import com.oleg.diplomfilemanager.fragments.SearchResultFragment;
+import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -29,15 +30,16 @@ public class SearchDialog extends DialogFragment implements
 	String[] trueData = { "/", "audio/", "video/", "image/", "text/",
 			"application/vnd.android.package-archive", "application/zip" };
 
-	private static String currentDir;
 	private EditText etSearch;
 	private Button butSearch;
 	private RadioGroup rgSearchIn;
 	private Spinner spinnerFileType;
 	private CheckBox cbNotCaseSensitive, cbSubfolder;
+	private static SystemOverviewFragment systemOverviewFragment;
 
-	public static DialogFragment getInstanse(String current) {
-		currentDir = current;
+	public static DialogFragment getInstanse(
+			SystemOverviewFragment systemFragment) {
+		systemOverviewFragment = systemFragment;
 		return new SearchDialog();
 	}
 
@@ -87,11 +89,9 @@ public class SearchDialog extends DialogFragment implements
 		Log.d("myLogs", "spinner "
 				+ spinnerFileType.getSelectedItem().toString());
 		ArrayList<FileInfoItem> matchList = FileManagment.getInstance()
-				.searchFile(bundle, currentDir);
-		Bundle args = new Bundle();
-		args.putParcelableArrayList("matches", matchList);
-		SearchResultFragment resultFragment = new SearchResultFragment();
-		resultFragment.setArguments(args);
+				.searchFile(bundle);
+		SearchResultFragment resultFragment = SearchResultFragment.getInstance(
+				systemOverviewFragment, matchList);
 		getFragmentManager().beginTransaction()
 				.replace(R.id.container, resultFragment).addToBackStack(null)
 				.commit();

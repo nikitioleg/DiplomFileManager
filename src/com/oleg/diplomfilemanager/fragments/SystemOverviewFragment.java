@@ -1,8 +1,6 @@
 package com.oleg.diplomfilemanager.fragments;
 
-import java.io.File;
 import java.util.ArrayList;
-
 import com.oleg.diplomfilemanager.Constants;
 import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.FileManagment;
@@ -14,7 +12,6 @@ import com.oleg.diplomfilemanager.dialogs.DeleteDialog;
 import com.oleg.diplomfilemanager.dialogs.NewFileDirDialog;
 import com.oleg.diplomfilemanager.dialogs.RenameDialog;
 import com.oleg.diplomfilemanager.dialogs.SearchDialog;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -31,7 +28,6 @@ import android.widget.Toast;
 
 public class SystemOverviewFragment extends ListFragment {
 
-	private String currentDir = Constants.SD_CARD;
 	private SystemOverviewAdapter overviewAdapter;
 	private FileManagment fileManagment;
 	ArrayList<FileInfoItem> currentDirFileInfoItems;
@@ -40,8 +36,8 @@ public class SystemOverviewFragment extends ListFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		fileManagment = FileManagment.getInstance();
-		updateList(fileManagment.getList(getArguments().getString(
-				Constants.DISP_DIR)));
+		String string = getArguments().getString(Constants.DISP_DIR);
+		updateList(fileManagment.getList(string));
 		getActivity().setTitle(getArguments().getString(Constants.DISP_DIR));
 		registerForContextMenu(getListView());
 		setHasOptionsMenu(true);
@@ -72,23 +68,24 @@ public class SystemOverviewFragment extends ListFragment {
 		case Constants.SD_CARD_STORAGE:
 			if (currentDirFileInfoItems.get(position).isCollection()) {
 
-				setCurrentDir(currentDirFileInfoItems.get(position)
-						.getFullPath(), false);
+				fileManagment.setCurrentDir(currentDirFileInfoItems.get(
+						position).getFullPath());
 				SystemOverviewFragment fragment = new SystemOverviewFragment();
 				Bundle bundle = new Bundle();
-				bundle.putString(Constants.DISP_DIR, getCurrentDir());
+				bundle.putString(Constants.DISP_DIR,
+						fileManagment.getCurrentDir());
 				fragment.setArguments(bundle);
 				getFragmentManager().beginTransaction()
 						.replace(R.id.container, fragment).addToBackStack(null)
 						.commit();
 			} else
 				FileManagment.getInstance().openFile(
-						currentDirFileInfoItems.get(position), this);
+						currentDirFileInfoItems.get(position), getActivity());
 			break;
 		case Constants.YANDEX_DISK_STORAGE:
 			if (currentDirFileInfoItems.get(position).isCollection()) {
-				setCurrentDir(currentDirFileInfoItems.get(position)
-						.getFullPath(), false);
+				fileManagment.setCurrentDir(currentDirFileInfoItems.get(
+						position).getFullPath());
 				getLoaderManager().destroyLoader(Constants.YANDEX_DISK_LOADER);
 				getLoaderManager().initLoader(Constants.YANDEX_DISK_LOADER,
 						null, LoadersControl.getInstance());
@@ -107,10 +104,10 @@ public class SystemOverviewFragment extends ListFragment {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		SharedPreferences preferences = getActivity().getPreferences(
 				getActivity().MODE_PRIVATE);
-		String temp = preferences.getString(Constants.PREFERENCES_KEY_COPY,
-				null);
-		String temp1 = preferences.getString(Constants.PREFERENCES_KEY_CUT,
-				null);
+		// String temp = preferences.getString(Constants.PREFERENCES_KEY_COPY,
+		// null);
+		// String temp1 = preferences.getString(Constants.PREFERENCES_KEY_CUT,
+		// null);
 		// if (!(temp==null)&&!(temp1==null)){
 		// TODO програмно добавлять
 		menu.add(0, Constants.PHONE_STORAGE_PASTE, 1, "Вставить");
@@ -129,19 +126,19 @@ public class SystemOverviewFragment extends ListFragment {
 		switch (item.getItemId()) {
 		case Constants.PHONE_STORAGE_PASTE:
 			LongFileOperatoin operatoin = new LongFileOperatoin(
-					Constants.PHONE_STORAGE_PASTE, null, currentDir, this);
+					Constants.PHONE_STORAGE_PASTE, null, this);
 			operatoin.start();
 			break;
 		case Constants.PHONE_STORAGE_REFRESH:
-			updateList(fileManagment.getList(currentDir));
+			updateList(fileManagment.getList(fileManagment.getCurrentDir()));
 			break;
 		case Constants.PHONE_STORAGE_CREATE_FILE_DIR:
-			NewFileDirDialog.getInstance(this, currentDir).show(
-					getFragmentManager(), "create_file_or_dir");
+			NewFileDirDialog.getInstance(this, fileManagment.getCurrentDir())
+					.show(getFragmentManager(), "create_file_or_dir");
 			break;
 		case Constants.PHONE_STORAGE_SEARCH:
-			SearchDialog.getInstanse(currentDir).show(getFragmentManager(),
-					"search");
+			SearchDialog.getInstanse(this).show(
+					getFragmentManager(), "search");
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -153,7 +150,6 @@ public class SystemOverviewFragment extends ListFragment {
 		menu.add(0, Constants.PHONE_STORAGE_COPY, 2, "Копировать");
 		menu.add(0, Constants.PHONE_STORAGE_CUT, 1, "Вырезать");
 		menu.add(0, Constants.PHONE_STORAGE_DELETE, 3, "Удалить");
-		// menu.add(0, Constants.PHONE_STORAGE_PASTE, 3, "Вставить");
 		menu.add(0, Constants.PHONE_STORAGE_PROPERTIES, 5, "Свойства");
 		menu.add(0, Constants.PHONE_STORAGE_RENAME, 4, "Переименовать");
 	}
@@ -187,13 +183,14 @@ public class SystemOverviewFragment extends ListFragment {
 			break;
 		case Constants.PHONE_STORAGE_DELETE:
 			DeleteDialog.getInstance(
-					currentDirFileInfoItems.get(info.position), currentDir,
-					this).show(getFragmentManager(), "delete");
+					currentDirFileInfoItems.get(info.position), this).show(
+					getFragmentManager(), "delete");
 			break;
 		case Constants.PHONE_STORAGE_RENAME:
 			RenameDialog.getInstance(
 					currentDirFileInfoItems.get(info.position), true, false,
-					this, currentDir).show(getFragmentManager(), "rename");
+					this, fileManagment.getCurrentDir()).show(
+					getFragmentManager(), "rename");
 			break;
 		case Constants.PHONE_STORAGE_PROPERTIES:
 
@@ -203,27 +200,16 @@ public class SystemOverviewFragment extends ListFragment {
 		return super.onContextItemSelected(item);
 	}
 
-//	public void back() {
-//		if (currentDirFileInfoItems.get(0).getFullPath()
-//				.equals(new File(currentDir).getParent())) {
-//			updateList(fileManagment.getList(currentDirFileInfoItems.get(0)
-//					.getFullPath()));
-//			setCurrentDir(currentDir, true);
-//			getActivity().setTitle(getCurrentDir());
-//		} else
-//			return;
-//	}
-
-	public String getCurrentDir() {
-		return currentDir;
-	}
-
-	public String setCurrentDir(String string, boolean getParent) {
-		if (getParent) {// нужно для возврата методом back
-			return currentDir = new File(string).getParent();
-		}
-		return currentDir = string;
-	}
+	// public void back() {
+	// if (currentDirFileInfoItems.get(0).getFullPath()
+	// .equals(new File(currentDir).getParent())) {
+	// updateList(fileManagment.getList(currentDirFileInfoItems.get(0)
+	// .getFullPath()));
+	// setCurrentDir(currentDir, true);
+	// getActivity().setTitle(getCurrentDir());
+	// } else
+	// return;
+	// }
 
 	public void updateList(ArrayList<FileInfoItem> items) {
 		setCurrentDirFileInfoItems(items);

@@ -30,22 +30,6 @@ public class YandexDiskAuthorization {
 			return true;
 	}
 
-	public void getYndexDiskFileList() {
-
-	}
-
-	public void openYandexDiskFile() {
-
-	}
-
-	public void deleteYandexDiskFile() {
-
-	}
-
-	public void renameYandexDiskFile() {
-
-	}
-
 	private void getToken() {
 		// AccountManager accountManager = AccountManager
 		// .get(context);
@@ -86,15 +70,9 @@ public class YandexDiskAuthorization {
 		if (matcher.find()) {
 			final String token = matcher.group(1);
 			if (!TextUtils.isEmpty(token)) {
-				// Log.d(TAG, "onLogin: token: " + token);
 				saveToken(token);
-			} else {
-				// Log.w(TAG, "onRegistrationSuccess: empty token");
-			}
-		} else {
-			// Log.w(TAG,
-			// "onRegistrationSuccess: token not found in return url");
-		}
+			} 
+		} 
 	}
 
 	private void saveToken(String token) {

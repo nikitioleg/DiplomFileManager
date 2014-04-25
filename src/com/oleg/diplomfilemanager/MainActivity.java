@@ -16,7 +16,7 @@ public class MainActivity extends ActionBarActivity {
 
 	private SystemOverviewFragment systemOverview;
 	private SlidingMenu slidingMenu;
-	private YandexDiskAuthorization yandexDiskClient;
+	private YandexDiskAuthorization authorization;
 	private SlidingMenuLayout slidingMenuLayout;
 
 	@Override
@@ -25,15 +25,16 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 		// clearPreferences();
 		systemOverview = new SystemOverviewFragment();
-		yandexDiskClient = new YandexDiskAuthorization(getApplicationContext());
+		authorization = new YandexDiskAuthorization(getApplicationContext());
 		Intent intent = getIntent();
 		if (intent != null && intent.getData() != null) {
-			yandexDiskClient.onLogin(getIntent());
+			authorization.onLogin(getIntent());
+			return;
 		}
 		if (savedInstanceState == null) {
 			createSlidingmenu();
 			Bundle bundle = new Bundle();
-			bundle.putString("displayed_directory", Constants.SD_CARD);
+			bundle.putString(Constants.DISP_DIR, Constants.SD_CARD);
 			systemOverview.setArguments(bundle);
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, systemOverview).commit();
