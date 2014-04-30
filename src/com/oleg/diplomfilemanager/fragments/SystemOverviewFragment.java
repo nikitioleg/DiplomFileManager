@@ -1,17 +1,21 @@
 package com.oleg.diplomfilemanager.fragments;
 
 import java.util.ArrayList;
+
 import com.oleg.diplomfilemanager.Constants;
 import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.FileManagment;
 import com.oleg.diplomfilemanager.LoadersControl;
 import com.oleg.diplomfilemanager.LongFileOperatoin;
 import com.oleg.diplomfilemanager.R;
+import com.oleg.diplomfilemanager.YandexDiskManagment;
 import com.oleg.diplomfilemanager.adapters.SystemOverviewAdapter;
 import com.oleg.diplomfilemanager.dialogs.DeleteDialog;
 import com.oleg.diplomfilemanager.dialogs.NewFileDirDialog;
 import com.oleg.diplomfilemanager.dialogs.RenameDialog;
 import com.oleg.diplomfilemanager.dialogs.SearchDialog;
+import com.oleg.diplomfilemanager.dialogs.YandexDiskDownloadDialog;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -90,8 +94,8 @@ public class SystemOverviewFragment extends ListFragment {
 				getLoaderManager().initLoader(Constants.YANDEX_DISK_LOADER,
 						null, LoadersControl.getInstance());
 			} else {
-				Toast.makeText(getActivity(), "Тут будет скачивание файла",
-						Toast.LENGTH_SHORT).show();
+				YandexDiskDownloadDialog.getInstance(
+						currentDirFileInfoItems.get(position), this).show(getChildFragmentManager(), null);
 			}
 			break;
 		default:
@@ -104,14 +108,14 @@ public class SystemOverviewFragment extends ListFragment {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		SharedPreferences preferences = getActivity().getPreferences(
 				getActivity().MODE_PRIVATE);
-		// String temp = preferences.getString(Constants.PREFERENCES_KEY_COPY,
-		// null);
-		// String temp1 = preferences.getString(Constants.PREFERENCES_KEY_CUT,
-		// null);
-		// if (!(temp==null)&&!(temp1==null)){
+		 String temp = preferences.getString(Constants.PREFERENCES_KEY_COPY,
+		 null);
+		 String temp1 = preferences.getString(Constants.PREFERENCES_KEY_CUT,
+		 null);
+		 if (temp!=null){
 		// TODO програмно добавлять
 		menu.add(0, Constants.PHONE_STORAGE_PASTE, 1, "Вставить");
-		// }
+		 }
 		menu.add(0, Constants.PHONE_STORAGE_SETTINGS, 6, "Настройки");
 		menu.add(0, Constants.PHONE_STORAGE_CREATE_FILE_DIR, 2, "Создать");
 		menu.add(0, Constants.PHONE_STORAGE_HOME, 4, "Домой");
@@ -137,8 +141,7 @@ public class SystemOverviewFragment extends ListFragment {
 					.show(getFragmentManager(), "create_file_or_dir");
 			break;
 		case Constants.PHONE_STORAGE_SEARCH:
-			SearchDialog.getInstanse(this).show(
-					getFragmentManager(), "search");
+			SearchDialog.getInstanse(this).show(getFragmentManager(), "search");
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -149,7 +152,7 @@ public class SystemOverviewFragment extends ListFragment {
 			ContextMenuInfo menuInfo) {
 		menu.add(0, Constants.PHONE_STORAGE_COPY, 2, "Копировать");
 		menu.add(0, Constants.PHONE_STORAGE_CUT, 1, "Вырезать");
-		menu.add(0, Constants.PHONE_STORAGE_DELETE, 3, "Удалить");
+		menu.add(0, Constants.DELETE, 3, "Удалить");
 		menu.add(0, Constants.PHONE_STORAGE_PROPERTIES, 5, "Свойства");
 		menu.add(0, Constants.PHONE_STORAGE_RENAME, 4, "Переименовать");
 	}
@@ -181,7 +184,7 @@ public class SystemOverviewFragment extends ListFragment {
 									.getFullPath())
 					.putString(Constants.PREFERENCES_KEY_CUT, null).commit();
 			break;
-		case Constants.PHONE_STORAGE_DELETE:
+		case Constants.DELETE:
 			DeleteDialog.getInstance(
 					currentDirFileInfoItems.get(info.position), this).show(
 					getFragmentManager(), "delete");
@@ -193,7 +196,6 @@ public class SystemOverviewFragment extends ListFragment {
 					getFragmentManager(), "rename");
 			break;
 		case Constants.PHONE_STORAGE_PROPERTIES:
-
 			break;
 
 		}

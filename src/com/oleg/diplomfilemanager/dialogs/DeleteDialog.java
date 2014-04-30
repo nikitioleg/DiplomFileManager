@@ -42,7 +42,7 @@ public class DeleteDialog extends DialogFragment {
 						FileInfoItem fileInfoItem = bundle
 								.getParcelable("file_info_item");
 						LongFileOperatoin operatoin = new LongFileOperatoin(
-								Constants.PHONE_STORAGE_DELETE, fileInfoItem,
+								Constants.DELETE, fileInfoItem,
 								overviewFragment);
 						operatoin.start();
 					}

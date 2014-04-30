@@ -32,7 +32,7 @@ public class LongFileOperatoin extends Thread {
 	@Override
 	public void run() {
 		switch (operationId) {
-		case Constants.PHONE_STORAGE_DELETE:
+		case Constants.DELETE:
 			try {
 				((ListFragment) overviewFragment).getActivity().runOnUiThread(
 						new Runnable() {
@@ -90,6 +90,7 @@ public class LongFileOperatoin extends Thread {
 				delCopyPref();
 			}
 			break;
+			
 		}
 	}
 

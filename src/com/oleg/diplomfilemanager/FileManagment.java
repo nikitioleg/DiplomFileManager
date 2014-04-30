@@ -41,7 +41,7 @@ public class FileManagment {
 	private static FileManagment instance;
 	private Context context;
 	private SharedPreferences preferences;
-	private  String currentDir = Constants.SD_CARD;
+	private String currentDir = Constants.SD_CARD;
 
 	private FileManagment(Context context) {
 		this.context = context;
@@ -63,7 +63,7 @@ public class FileManagment {
 	private final int GB = MB * KB;
 
 	private FileInfoItem.Builder builder;
-	
+
 	public String getCurrentDir() {
 		return currentDir;
 	}
@@ -216,7 +216,7 @@ public class FileManagment {
 		open.setAction(android.content.Intent.ACTION_VIEW);
 		try {
 			open.setDataAndType(
-					Uri.fromFile(new File(fileInfoItem.getPublicUrl())),
+					Uri.fromFile(new File(fileInfoItem.getFullPath())),
 					fileInfoItem.getContentType());
 			Log.d(LOG_TAG, "Open try " + fileInfoItem.getContentType());
 			open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

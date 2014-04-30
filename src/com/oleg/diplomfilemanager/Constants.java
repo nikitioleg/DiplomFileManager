@@ -16,7 +16,7 @@ public class Constants {
 	public static final int PHONE_STORAGE_CUT = 100;
 	public static final int PHONE_STORAGE_COPY = 101;
 	public static final int PHONE_STORAGE_PASTE = 102;
-	public static final int PHONE_STORAGE_DELETE = 103;
+	public static final int DELETE = 103;
 	public static final int PHONE_STORAGE_RENAME = 104;
 	public static final int PHONE_STORAGE_PROPERTIES = 105;
 	public static final int PHONE_STORAGE_SETTINGS = 106;
@@ -25,6 +25,8 @@ public class Constants {
 	public static final int PHONE_STORAGE_REFRESH = 109;
 	public static final int PHONE_STORAGE_SEARCH = 110;
 	public static final int PHONE_STORAGE_CREATE_FILE = 111;
+	public static final int DOWNLOAD = 111;
+	public static final int MOVE = 112;
 	public static final String PREFERENCES_KEY_CUT = "cut";
 	public static final String PREFERENCES_KEY_COPY = "copy";
 	public static final String DISP_DIR = "displayed_directory";
@@ -35,5 +37,5 @@ public class Constants {
 	public static final String ACCOUNT_TYPE = "com.yandex";
 	public static final String AUTH_URL = "https://oauth.yandex.ru/authorize?response_type=token&client_id="
 			+ CLIENT_ID;
-
+	
 }

@@ -51,7 +51,7 @@ public class SearchResultFragment extends ListFragment {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
-		menu.add(0, Constants.PHONE_STORAGE_DELETE, 1, "Удалить");
+		menu.add(0, Constants.DELETE, 1, "Удалить");
 		menu.add(0, Constants.PHONE_STORAGE_PROPERTIES, 2, "Свойства");
 
 	}
@@ -61,7 +61,7 @@ public class SearchResultFragment extends ListFragment {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 		switch (item.getItemId()) {
-		case Constants.PHONE_STORAGE_DELETE:
+		case Constants.DELETE:
 			DeleteDialog.getInstance(matches.get(info.position),
 					systemOverviewFragment).show(getFragmentManager(),
 					"delete");
