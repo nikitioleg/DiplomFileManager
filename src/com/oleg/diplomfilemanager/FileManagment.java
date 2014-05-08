@@ -68,6 +68,17 @@ public class FileManagment {
 		return currentDir;
 	}
 
+	public String getPreviousDir() {
+		String string = getCurrentDir();
+		int i = string.lastIndexOf("/");
+		if (i == 0) {
+			setCurrentDir("/");
+			return getCurrentDir();
+		}
+		setCurrentDir(string.substring(0, i));
+		return getCurrentDir();
+	}
+
 	public String setCurrentDir(String string) {
 		return currentDir = string;
 	}

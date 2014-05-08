@@ -5,8 +5,10 @@ import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.FileManagment;
 import com.oleg.diplomfilemanager.LoadersControl;
 import com.oleg.diplomfilemanager.LongFileOperatoin;
+import com.oleg.diplomfilemanager.R;
 import com.oleg.diplomfilemanager.YandexDiskManagment;
 import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
+import com.oleg.diplomfilemanager.fragments.YandexDiskOverviewFragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -15,22 +17,23 @@ import android.content.DialogInterface.OnClickListener;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.EditText;
 
 public class RenameDialog extends DialogFragment {
 
-	private static SystemOverviewFragment overviewFragment;
+	private static ListFragment fragment;
 	private static boolean renameMark;
 	private static boolean isFile;
 	private static String currentPath;
 
 	public static RenameDialog getInstance(FileInfoItem fileInfoItem,
-			boolean rename, boolean fileOrDirMark,
-			SystemOverviewFragment systemOverviewFragment, String path) {
+			boolean rename, boolean fileOrDirMark, ListFragment listFragment,
+			String path) {
 		renameMark = rename;
 		isFile = fileOrDirMark;
-		overviewFragment = systemOverviewFragment;
+		fragment = listFragment;
 		currentPath = path;
 		Bundle bundle = new Bundle();
 		bundle.putParcelable("file_info_item", fileInfoItem);
@@ -77,7 +80,7 @@ public class RenameDialog extends DialogFragment {
 
 								@Override
 								public void run() {
-									overviewFragment
+									((SystemOverviewFragment) fragment)
 											.updateList(FileManagment
 													.getInstance().getList(
 															currentPath));
@@ -88,38 +91,18 @@ public class RenameDialog extends DialogFragment {
 							new Thread(new Runnable() {
 								@Override
 								public void run() {
-									YandexDiskManagment
-											.getInstance()
+									YandexDiskManagment.getInstance()
 											.moveYandexDiskFile(
 													fileInfoItem.getFullPath(),
-													FileManagment.getInstance()
-															.getCurrentDir()
-															+ newDirName
-																	.getText()
-																	.toString());
-									overviewFragment.getActivity()
-											.runOnUiThread(new Runnable() {
+													createNewPath(currentPath,
+															newDirName));
+									((YandexDiskOverviewFragment) fragment)
+											.reloadContent(currentPath);
 
-												@Override
-												public void run() {
-													((ActionBarActivity) overviewFragment
-															.getActivity())
-															.getSupportLoaderManager()
-															.destroyLoader(
-																	Constants.YANDEX_DISK_LOADER);
-													((ActionBarActivity) overviewFragment
-															.getActivity())
-															.getSupportLoaderManager()
-															.initLoader(
-																	Constants.YANDEX_DISK_LOADER,
-																	null,
-																	LoadersControl
-																			.getInstance());
-												}
-											});
 								}
 
 							}).start();
+
 							break;
 						}
 
@@ -131,5 +114,14 @@ public class RenameDialog extends DialogFragment {
 						dismiss();
 					}
 				}).create();
+	}
+
+	private String createNewPath(String currentPath, EditText newDirName) {
+		if (currentPath.equalsIgnoreCase("/")) {
+			return currentPath + newDirName.getText().toString();
+		} else {
+			return FileManagment.getInstance().getCurrentDir() + "/"
+					+ newDirName.getText().toString();
+		}
 	}
 }

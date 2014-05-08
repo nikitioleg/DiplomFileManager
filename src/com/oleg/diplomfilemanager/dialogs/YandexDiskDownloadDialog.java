@@ -5,6 +5,7 @@ import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.LongFileOperatoin;
 import com.oleg.diplomfilemanager.YandexDiskManagment;
 import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
+import com.oleg.diplomfilemanager.fragments.YandexDiskOverviewFragment;
 import com.yandex.disk.client.ProgressListener;
 
 import android.app.Dialog;
@@ -19,14 +20,14 @@ public class YandexDiskDownloadDialog extends DialogFragment implements
 
 	private static final int PROGRESS = 1024 * 1024;
 	private ProgressDialog dialog;
-	private static SystemOverviewFragment overviewFragment;
+	private static YandexDiskOverviewFragment yandexOverviewFragment;
 	private Bundle bundle;
 	private boolean cancel = false;
 
 	public static YandexDiskDownloadDialog getInstance(
 			FileInfoItem fileInfoItem,
-			SystemOverviewFragment systemOverviewFragment) {
-		overviewFragment = systemOverviewFragment;
+			YandexDiskOverviewFragment yandexDiskOverviewFragment) {
+		yandexOverviewFragment = yandexDiskOverviewFragment;
 		Bundle bundle = new Bundle();
 		bundle.putParcelable("file_info_item", fileInfoItem);
 		YandexDiskDownloadDialog downloadDialog = new YandexDiskDownloadDialog();
@@ -91,7 +92,7 @@ public class YandexDiskDownloadDialog extends DialogFragment implements
 
 	@Override
 	public void updateProgress(final long loaded, final long total) {
-		overviewFragment.getActivity().runOnUiThread(new Runnable() {
+		yandexOverviewFragment.getActivity().runOnUiThread(new Runnable() {
 
 			@Override
 			public void run() {

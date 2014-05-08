@@ -25,14 +25,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class SystemOverviewAdapter extends BaseAdapter {
+public class OverviewAdapter extends BaseAdapter {
 
 	private LayoutInflater lInflater;
 	private static Context context;
 	private ArrayList<FileInfoItem> fileInfoItems;
 	private SharedPreferences sharedPreferences;
 
-	public SystemOverviewAdapter(Context context,
+	public OverviewAdapter(Context context,
 			ArrayList<FileInfoItem> fileInfoItems) {
 		this.context = context;
 		this.fileInfoItems = fileInfoItems;

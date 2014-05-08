@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.ListFragment;
 
 import com.oleg.diplomfilemanager.Constants;
 import com.oleg.diplomfilemanager.FileInfoItem;
@@ -16,11 +17,11 @@ import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
 
 public class DeleteDialog extends DialogFragment {
 
-	private static SystemOverviewFragment overviewFragment;
+	private static ListFragment fragment;
 	
 	public static DeleteDialog getInstance(FileInfoItem fileInfoItem,
-			SystemOverviewFragment systemOverviewFragment) {
-		overviewFragment = systemOverviewFragment;
+			ListFragment listFragment) {
+		fragment = listFragment;
 		Bundle bundle = new Bundle();
 		bundle.putParcelable("file_info_item", fileInfoItem);
 		DeleteDialog deleteDialog = new DeleteDialog();
@@ -43,7 +44,7 @@ public class DeleteDialog extends DialogFragment {
 								.getParcelable("file_info_item");
 						LongFileOperatoin operatoin = new LongFileOperatoin(
 								Constants.DELETE, fileInfoItem,
-								overviewFragment);
+								fragment);
 						operatoin.start();
 					}
 				}).setNegativeButton("Нет", new OnClickListener() {

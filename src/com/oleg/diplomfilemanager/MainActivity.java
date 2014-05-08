@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -62,13 +63,14 @@ public class MainActivity extends ActionBarActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
-//	@Override
-//	public boolean onKeyUp(int keyCode, KeyEvent event) {
-//		if (keyCode == KeyEvent.KEYCODE_BACK) {
-//			systemOverview.back();
-//		}
-//		return false;
-//	}
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			FileManagment.getInstance().getPreviousDir();
+			setTitle(FileManagment.getInstance().getCurrentDir());
+		}
+		return super.onKeyUp(keyCode, event);
+	}
 
 	@Override
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {

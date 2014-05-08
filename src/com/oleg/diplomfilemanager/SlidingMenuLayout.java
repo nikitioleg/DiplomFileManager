@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.oleg.diplomfilemanager.adapters.SlidingMenuAdapter;
 import com.oleg.diplomfilemanager.fragments.SystemOverviewFragment;
+import com.oleg.diplomfilemanager.fragments.YandexDiskOverviewFragment;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -20,7 +23,7 @@ public class SlidingMenuLayout extends LinearLayout implements
 		OnChildClickListener {
 
 	private ExpandableListView list;
-	private Context ctx;
+	private Context context;
 	private SlidingMenu slidingMenu;
 	private SystemOverviewFragment systemOverview;
 	private LoaderManager.LoaderCallbacks<ArrayList<FileInfoItem>> loadersControl;
@@ -30,11 +33,10 @@ public class SlidingMenuLayout extends LinearLayout implements
 	public SlidingMenuLayout(Context ctx, SlidingMenu slidingMenu,
 			SystemOverviewFragment systemOverview) {
 		super(ctx);
-		this.ctx = ctx;
+		this.context = ctx;
 		this.slidingMenu = slidingMenu;
 		this.systemOverview = systemOverview;
 		adapter = new SlidingMenuAdapter(ctx);
-		//loadersControl = new LoadersControl(ctx, systemOverview);
 		yandexDiskAuthorization = new YandexDiskAuthorization(ctx);// создавать
 																	// во время
 																	// обращения
@@ -48,7 +50,7 @@ public class SlidingMenuLayout extends LinearLayout implements
 
 	private void setSlidingMenuAdapter() {
 		list = (ExpandableListView) findViewById(R.id.slidingmenu_view);
-		
+
 		list.setAdapter(adapter);
 		list.setOnChildClickListener(this);
 	}
@@ -60,7 +62,7 @@ public class SlidingMenuLayout extends LinearLayout implements
 	@Override
 	public boolean onChildClick(ExpandableListView parent, View v,
 			int groupPosition, int childPosition, long id) {
-		Toast.makeText(ctx, " " + groupPosition + " " + childPosition,
+		Toast.makeText(context, " " + groupPosition + " " + childPosition,
 				Toast.LENGTH_SHORT).show();
 		if (groupPosition == 0 & childPosition == 0) {
 			FileManagment.getInstance().setCerrentStorage(
@@ -75,15 +77,38 @@ public class SlidingMenuLayout extends LinearLayout implements
 				FileManagment.getInstance().setCerrentStorage(
 						Constants.YANDEX_DISK_STORAGE);
 				FileManagment.getInstance().setCurrentDir(Constants.ROOT);
-				LoadersControl.initInstance(ctx, systemOverview);
-				((ActionBarActivity) ctx).getSupportLoaderManager().initLoader(
-						Constants.YANDEX_DISK_LOADER, null, LoadersControl.getInstance());
+				clearBackStack();
+				YandexDiskOverviewFragment fragment = new YandexDiskOverviewFragment();
+				Bundle bundle = new Bundle();
+				bundle.putString(Constants.DISP_DIR, Constants.ROOT);
+				fragment.setArguments(bundle);
+				((ActionBarActivity) context).getSupportFragmentManager()
+						.beginTransaction().replace(R.id.container, fragment)
+						.commit();
 				slidingMenu.toggle();
 				return false;
 			}
 
 		}
 		return false;
+	}
+
+	private void clearBackStack() {
+		
+		Runnable r  = new Runnable(){
+
+			@Override
+			public void run() {
+				FragmentManager fm = ((ActionBarActivity) context)
+						.getSupportFragmentManager();
+				for (int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+					fm.popBackStack();
+				}
+			}
+			
+		};
+		r.run();
+		
 	}
 
 }
