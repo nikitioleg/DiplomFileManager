@@ -35,7 +35,8 @@ public class MainActivity extends ActionBarActivity {
 		if (savedInstanceState == null) {
 			createSlidingmenu();
 			Bundle bundle = new Bundle();
-			bundle.putString(Constants.DISP_DIR, Constants.SD_CARD);
+			bundle.putString(Constants.DISP_DIR, FileManagment.getInstance()
+					.getPhoneStorages().get(0).getAbsolutePath());
 			systemOverview.setArguments(bundle);
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, systemOverview).commit();

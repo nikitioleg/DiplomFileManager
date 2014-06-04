@@ -4,6 +4,7 @@ import com.oleg.diplomfilemanager.Constants;
 import com.oleg.diplomfilemanager.FileInfoItem;
 import com.oleg.diplomfilemanager.YandexDiskManagment;
 import com.yandex.disk.client.ProgressListener;
+
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -11,22 +12,22 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 
-public class YandexDiskDownloadDialog extends DialogFragment implements
+public class UploadYandexDiskDialog extends DialogFragment implements
 		ProgressListener {
 
-	private ProgressDialog dialog;
 	private static ListFragment listFragment;
 	private Bundle bundle;
+	private ProgressDialog dialog;
 	private boolean cancel = false;
 
-	public static YandexDiskDownloadDialog getInstance(
-			FileInfoItem fileInfoItem, ListFragment fragment) {
+	public static UploadYandexDiskDialog getInstance(FileInfoItem fileInfoItem,
+			ListFragment fragment) {
 		listFragment = fragment;
 		Bundle bundle = new Bundle();
 		bundle.putParcelable("file_info_item", fileInfoItem);
-		YandexDiskDownloadDialog downloadDialog = new YandexDiskDownloadDialog();
-		downloadDialog.setArguments(bundle);
-		return downloadDialog;
+		UploadYandexDiskDialog uploadDialog = new UploadYandexDiskDialog();
+		uploadDialog.setArguments(bundle);
+		return uploadDialog;
 	}
 
 	@Override
@@ -35,7 +36,7 @@ public class YandexDiskDownloadDialog extends DialogFragment implements
 		bundle = getArguments();
 		FileInfoItem fileInfoItem = bundle.getParcelable("file_info_item");
 		dialog = new ProgressDialog(getActivity());
-		dialog.setTitle("Загрузка");
+		dialog.setTitle("Отправка");
 		dialog.setMessage(fileInfoItem.getDisplayName());
 		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		dialog.setIndeterminate(true);
@@ -49,8 +50,34 @@ public class YandexDiskDownloadDialog extends DialogFragment implements
 					}
 				});
 		dialog.show();
-		loadFile(fileInfoItem);
+		uploadFile(fileInfoItem);
 		return dialog;
+	}
+
+	private void uploadFile(final FileInfoItem item) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				YandexDiskManagment.getInstance().uploadFileToYandexDisk(item,
+						UploadYandexDiskDialog.this);
+				downloadComplete();
+			}
+		}).start();
+	}
+
+	private void downloadComplete() {
+		dismiss();
+	}
+
+	@Override
+	public void updateProgress(final long loaded, final long total) {
+		listFragment.getActivity().runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				setDownloadProgress(loaded, total);
+			}
+		});
 	}
 
 	private void setDownloadProgress(long loaded, long total) {
@@ -66,34 +93,6 @@ public class YandexDiskDownloadDialog extends DialogFragment implements
 				dialog.setMax((int) total);
 			}
 		}
-	}
-
-	private void downloadComplete() {
-		dismiss();
-	}
-
-	private void loadFile(final FileInfoItem item) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				YandexDiskManagment.getInstance().downloadYandexDiskFile(item,
-						YandexDiskDownloadDialog.this);
-				YandexDiskDownloadDialog.this.downloadComplete();
-			}
-
-		}).start();
-	}
-
-	@Override
-	public void updateProgress(final long loaded, final long total) {
-		listFragment.getActivity().runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-				YandexDiskDownloadDialog.this
-						.setDownloadProgress(loaded, total);
-			}
-		});
 	}
 
 	@Override

@@ -1,9 +1,12 @@
 package com.oleg.diplomfilemanager.adapters;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.oleg.diplomfilemanager.FileManagment;
 import com.oleg.diplomfilemanager.R;
+
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -14,11 +17,8 @@ import android.widget.TextView;
 
 public class SlidingMenuAdapter extends BaseExpandableListAdapter {
 
-	private String[] group = new String[] { "Хранилища", "Избранное",
-			"Недавно открытые" };
-	private String[] storage = new String[] { "sdcard0", "sdcard1" };
-	private String[] lastOpen = new String[] { "Item 0", "Item 1", "Item 2",
-			"Item 3" };
+	private String[] group = new String[] { "Хранилища"};
+	private String[] storage = new String[] { "sdcard0", "sdcard1","Yandex.Disk" };
 	private HashMap<String, ArrayList<String>> data;
 	private LayoutInflater layoutInflater;
 
@@ -32,20 +32,15 @@ public class SlidingMenuAdapter extends BaseExpandableListAdapter {
 
 		HashMap<String, ArrayList<String>> data = new HashMap<String, ArrayList<String>>();
 		ArrayList<String> child = new ArrayList<String>();
-
-		for (int i = 0; i < lastOpen.length; i++) {
-			child.add(lastOpen[i]);
+		
+		for (File file : FileManagment.getInstance().getPhoneStorages()) {
+			child.add(file.getName());
 		}
-		data.put(group[1], child);
-		data.put(group[2], child);
-		child = new ArrayList<String>();
-		// child.clear();
-		for (int j = 0; j < storage.length; j++) {
-			child.add(storage[j]);
-		}
+		child.add("Yandex.Disk");		
 		data.put(group[0], child);
-		// child.clear();
+
 		return data;
+
 	}
 
 	@Override

@@ -42,9 +42,16 @@ public class FileManagment {
 	private Context context;
 	private SharedPreferences preferences;
 	private String currentDir = Constants.SD_CARD;
+	private final String LOG_TAG = "myLogs";
+	private final int KB = 1024;
+	private final int MB = KB * KB;
+	private final int GB = MB * KB;
+	private FileInfoItem.Builder builder;
+	private ArrayList<File> storages;
 
 	private FileManagment(Context context) {
 		this.context = context;
+		storages = getPhoneStorages();
 	}
 
 	public static void initInstance(Context context) {
@@ -57,12 +64,18 @@ public class FileManagment {
 		return instance;
 	}
 
-	private final String LOG_TAG = "myLogs";
-	private final int KB = 1024;
-	private final int MB = KB * KB;
-	private final int GB = MB * KB;
+	public ArrayList<File> getPhoneStorages() {
+		ArrayList<File> storages = new ArrayList<File>();
+		File file = new File(Constants.STORAGE);
+		for (File storage : file.listFiles()) {
+			storages.add(storage);
+		}
+		return storages;
+	}
 
-	private FileInfoItem.Builder builder;
+	public ArrayList<File> getStorages() {
+		return storages;
+	}
 
 	public String getCurrentDir() {
 		return currentDir;
@@ -188,7 +201,7 @@ public class FileManagment {
 		File[] temp = file.listFiles();
 		ArrayList<FileInfoItem> filesInfoList = new ArrayList<FileInfoItem>();
 		builder = new FileInfoItem.Builder();
-		if (!currentFile.equals(Constants.SD_CARD)) {
+		if (!isMainDir(currentFile)) {
 			builder.setFullPath(new File(currentFile).getParent());
 			builder.setDisplayName(" ... ");
 			builder.addCollection(true);
@@ -199,6 +212,15 @@ public class FileManagment {
 			filesInfoList.add(getFileItem(builder, temp[i]).build());
 		}
 		return filesInfoList;
+	}
+
+	private boolean isMainDir(String currentFile) {
+		for (File file : FileManagment.getInstance().getPhoneStorages()) {
+			if (currentFile .equals(file.getAbsolutePath())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private FileInfoItem.Builder getFileItem(FileInfoItem.Builder mBuilder,
@@ -296,26 +318,8 @@ public class FileManagment {
 			} catch (IOException e) {
 				Log.d(LOG_TAG, "IOException");
 				e.printStackTrace();
-			} finally {
-				// if (inputStream != null) {
-				// try {
-				// inputStream.close();
-				// } catch (IOException e) {
-				// e.printStackTrace();
-				// }
-				// }
-				// if (outputStream != null) {
-				// try {
-				// outputStream.close();
-				// } catch (IOException e) {
-				// e.printStackTrace();
-				// }
-				// }
-				// copyProgressDialog.dismiss();
 			}
-
 		}
-
 	}
 
 	public boolean delete(String delFilePath) {
@@ -386,7 +390,7 @@ public class FileManagment {
 			}
 		else {
 			files = new ArrayList<File>(Arrays.asList(new File(
-					Constants.SEARCH_MAIN_DIR).listFiles()));
+					Constants.STORAGE).listFiles()));
 		}
 
 		Iterator<File> iterator = files.iterator();

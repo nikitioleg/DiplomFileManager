@@ -84,7 +84,7 @@ public class YandexDiskOverviewFragment extends ListFragment {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		menu.add(0, Constants.CUT, 1, "Вырезать");
 		menu.add(0, Constants.DELETE, 3, "Удалить");
-		menu.add(0, Constants.PHONE_STORAGE_PROPERTIES, 4, "Свойства");
+		//menu.add(0, Constants.PHONE_STORAGE_PROPERTIES, 4, "Свойства");
 		menu.add(0, Constants.RENAME, 2, "Переименовать");
 	}
 

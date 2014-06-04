@@ -7,7 +7,7 @@ public class Constants {
 	public static final String SD_CARD = Environment
 			.getExternalStorageDirectory().getPath();
 	public static final String ROOT = "/";
-	public static final String SEARCH_MAIN_DIR = "/storage";
+	public static final String STORAGE = "/storage";
 	public static final String STORAGE_ID = "sterage_id";
 	public static final int YANDEX_DISK_STORAGE = 1;
 	public static final int SD_CARD_STORAGE = 2;
@@ -27,6 +27,7 @@ public class Constants {
 	public static final int PHONE_STORAGE_CREATE_FILE = 111;
 	public static final int DOWNLOAD = 111;
 	public static final int MOVE = 112;
+	public static final int SEND_YANDEX_DISK = 113;
 	public static final String PREFERENCES_KEY_CUT = "cut";
 	public static final String PREFERENCES_KEY_COPY = "copy";
 	public static final String DISP_DIR = "displayed_directory";
@@ -37,5 +38,7 @@ public class Constants {
 	public static final String ACCOUNT_TYPE = "com.yandex";
 	public static final String AUTH_URL = "https://oauth.yandex.ru/authorize?response_type=token&client_id="
 			+ CLIENT_ID;
+	public static final int PROGRESS = 1024 * 1024;
+	
 	
 }

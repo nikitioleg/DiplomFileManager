@@ -52,7 +52,7 @@ public class SearchResultFragment extends ListFragment {
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		menu.add(0, Constants.DELETE, 1, "Удалить");
-		menu.add(0, Constants.PHONE_STORAGE_PROPERTIES, 2, "Свойства");
+		//menu.add(0, Constants.PHONE_STORAGE_PROPERTIES, 2, "Свойства");
 
 	}
 

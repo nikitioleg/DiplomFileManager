@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.oleg.diplomfilemanager.dialogs.UploadYandexDiskDialog;
 import com.oleg.diplomfilemanager.dialogs.YandexDiskDownloadDialog;
 import com.yandex.disk.client.Credentials;
 import com.yandex.disk.client.ProgressListener;
@@ -62,6 +63,25 @@ public class YandexDiskManagment {
 		}
 	}
 
+	public void uploadFileToYandexDisk(FileInfoItem fileInfoItem,
+			UploadYandexDiskDialog uploadYandexDiskDialog) {
+		TransportClient client = null;
+		try {
+			client = TransportClient.getInstance(context, getCredentials());
+			client.uploadFile(fileInfoItem.getFullPath(), "/"
+					, uploadYandexDiskDialog);
+		} catch (IOException ex) {
+			Log.d(TAG, "uploadItem", ex);
+		} catch (WebdavException ex) {
+			Log.d(TAG, "uploadItem", ex);
+		} finally {
+			if (client != null) {
+				client.shutdown();
+			}
+		}
+		return;
+	}
+
 	public void deleteYandexDiskFile(FileInfoItem fileInfoItem) {
 		TransportClient client = null;
 		try {
@@ -94,4 +114,5 @@ public class YandexDiskManagment {
 		}
 		return;
 	}
+
 }
